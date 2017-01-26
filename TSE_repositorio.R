@@ -706,10 +706,10 @@ table(cand_2008_supv3_runoff$rankvote, cand_2008_supv3_runoff$DESC_SIT_TOT_TURNO
 
 ####Vote margin (share and absolute)
 electionsf_sup_runoff_2008 <- NULL
-vote_margin_share <- max(cand_2008_supv3_runoff_2008$VOTO_CAND_SHARE) - min(cand_2008_supv3_runoff_2008$VOTO_CAND_SHARE) 
-vote_margin_abs <- max(cand_2008_supv3_runoff_2008$VOTO_MUN_CAND) - min(cand_2008_supv3_runoff_2008$VOTO_MUN_CAND)
-winner <- cand_2008_supv3_runoff_2008 %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-runner_up <- cand_2008_supv3_runoff_2008 %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
+vote_margin_share <- max(cand_2008_supv3_runoff$VOTO_CAND_SHARE) - min(cand_2008_supv3_runoff$VOTO_CAND_SHARE) 
+vote_margin_abs <- max(cand_2008_supv3_runoff$VOTO_MUN_CAND) - min(cand_2008_supv3_runoff$VOTO_MUN_CAND)
+winner <- cand_2008_supv3_runoff %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
+runner_up <- cand_2008_supv3_runoff %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
 margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
 margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
 electionsf_sup_runoff_2008 <- bind_rows(electionsf_sup_runoff_2008, margin_winner, margin_runner)
@@ -854,7 +854,7 @@ table(cand_2012v6$DESC_SIT_TOT_TURNO) #half and half
 #Getting vote margins
 muns <- unique(cand_2012v6$SIGLA_UE)
 
-electionsf <- NULL
+electionsf_2012 <- NULL
 
 for (i in 1:length(muns)){
   
@@ -868,7 +868,7 @@ for (i in 1:length(muns)){
   margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
   margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
 
-  electionsf <- bind_rows(electionsf, margin_winner, margin_runner)
+  electionsf <- bind_rows(electionsf_2012, margin_winner, margin_runner)
   print(i)
   
 } 
@@ -932,7 +932,7 @@ table(cand_2012_supv6$DESC_SIT_TOT_TURNO) #half and half
 #Getting vote margins
 muns_sup <- unique(cand_2012_supv6$SIGLA_UE)
 
-electionsf_sup <- NULL
+electionsf_sup_2012 <- NULL
 
 for (i in 1:length(muns_sup)){
   
@@ -946,15 +946,19 @@ for (i in 1:length(muns_sup)){
   margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
   margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
   
-  electionsf_sup <- bind_rows(electionsf_sup, margin_winner, margin_runner)
+  electionsf_sup_2012 <- bind_rows(electionsf_sup_2012, margin_winner, margin_runner)
   print(i)
   
 } 
 
 ######### Binding elections (regulares and nao regulares)
-electionsff_2012 <- bind_rows(electionsf, electionsf_sup)
+electionsf_2012 <- electionsf_2012 %>% bind_cols(data_frame(TYPE_ELECTION = rep("regular", nrow(electionsf_2012))))  
+electionsf_sup_2012 <- electionsf_sup_2012 %>% bind_cols(data_frame(TYPE_ELECTION = rep("nonregular", nrow(electionsf_sup_2012))))                                            
+
+electionsff_2012 <- bind_rows(electionsf_2012, electionsf_sup_2012)
 
 #Simple Smell tests
+table(electionsff_2012$TYPE_ELECTION)
 table(electionsff_2012$DESC_SIT_TOT_TURNO) #half and half
 table(electionsff_2012$rankvoter) #half and half
 
@@ -965,7 +969,7 @@ table(nchar(electionsff_2012$CPF_CANDIDATO)) #existem erros
 table(nchar(electionsff_2012$NUM_TITULO_ELEITORAL_CANDIDATO)) #existem erros
 table(nchar(electionsff_2012$SEQUENCIAL_CANDIDATO)) #erros ou dois tipos de sequenciais?
 
-#save(electionsff_2012, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2012.Rda")
+save(electionsff_2012, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2012.Rda")
 
 
 
