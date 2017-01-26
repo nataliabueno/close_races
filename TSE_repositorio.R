@@ -868,7 +868,7 @@ for (i in 1:length(muns)){
   margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
   margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
 
-  electionsf <- bind_rows(electionsf_2012, margin_winner, margin_runner)
+  electionsf_2012 <- bind_rows(electionsf_2012, margin_winner, margin_runner)
   print(i)
   
 } 
