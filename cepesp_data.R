@@ -34,7 +34,7 @@ round1 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/original_data/2000-200
                    col_types = cols(.default = col_character(), voto_total= col_number()), locale=br)
   
 round2 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/original_data/2000-2004-2008-2012-2016_Prefeito_Municipio_Candidato_2turno.csv",
-                   col_types = cols(.default = col_character(), voto_total= col_number()), locale=br)  
+                   col_types = cols(.default = col_character(), voto_total= col_number()), locale=br) 
 
 #creating municipality election year key and removing brancos/nulos
 round1 <- round1 %>% mutate(mun_electionyear = paste0(SG_UE, anoEleicao)) %>% filter(cargo_cod!=0)
@@ -47,7 +47,15 @@ e_round2 <- round1 %>% filter(resultado_des == "2º TURNO") %>% distinct(mun_ele
 round1v1 <- round1 %>% filter(!mun_electionyear %in% e_round2$mun_electionyear) 
 
 #Showing issues with consistency using absolute number of votes (not just vote share)
-
+#round1v4 <- round1v3 %>% filter(ncandidates != 1) %>% mutate(rankvote = rank(-voto_cand)) %>% 
+#  mutate(rankvoter = ifelse(rankvote == 1.5 & resultado_des == "ELEITO", 1,
+#                            ifelse(rankvote == 1.5 & resultado_des == "NÃO ELEITO", 2, 
+#                                   ifelse(rankvote == 2.5 & titulo==117261490116, 2,
+#                                          ifelse(rankvote == 2.5 & titulo==46038350132, 3, 
+#                                                 ifelse(rankvote == 2.5 & titulo==40299850663, 2,
+#                                                        ifelse(rankvote == 2.5 & titulo==57422710604, 3, rankvote)))))))
+#
+#table(round1v4$resultado_des, round1v4$rankvoter)
 
 
 #Getting candidate vote share

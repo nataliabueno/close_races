@@ -173,7 +173,6 @@ save(vot_2000_2016, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_
 #2.2 Elections 2004 -----> OK
 #2.3 Elections 2008 -----> OK
 #2.4 Elections 2012 -----> OK
-#2.5 Elections 2016
 ###################################################################
 
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2000_2016.RData")
