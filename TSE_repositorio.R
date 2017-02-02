@@ -179,6 +179,12 @@ save(vot_2000_2016, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2000_2016.RData")
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2000_2016.RData")
 
+#######Elections 2000
+
+
+
+
+
 #######Elections 2004
 vot_2004 <- vot_2000_2016[[2]]
 cand_2004 <- cand_2000_2016[[2]]
@@ -969,7 +975,7 @@ table(nchar(electionsff_2012$CPF_CANDIDATO)) #existem erros
 table(nchar(electionsff_2012$NUM_TITULO_ELEITORAL_CANDIDATO)) #existem erros
 table(nchar(electionsff_2012$SEQUENCIAL_CANDIDATO)) #erros ou dois tipos de sequenciais?
 
-save(electionsff_2012, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2012.Rda")
+#save(electionsff_2012, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2012.Rda")
 
 
 

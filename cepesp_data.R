@@ -46,6 +46,10 @@ round2 <- round2 %>% mutate(mun_electionyear = paste0(SG_UE, anoEleicao)) %>% fi
 e_round2 <- round1 %>% filter(resultado_des == "2º TURNO") %>% distinct(mun_electionyear)
 round1v1 <- round1 %>% filter(!mun_electionyear %in% e_round2$mun_electionyear) 
 
+#Showing issues with consistency using absolute number of votes (not just vote share)
+
+
+
 #Getting candidate vote share
 round1v2 <- round1v1 %>% filter(resultado_des %in% c("ELEITO","NÃO ELEITO")) %>% group_by(SG_UE, anoEleicao) %>% summarize(voto_mun_total = sum(voto_total))
 #round1v2 <- round1v1 %>% group_by(SG_UE, anoEleicao) %>% summarize(voto_mun_total = sum(voto_total))
