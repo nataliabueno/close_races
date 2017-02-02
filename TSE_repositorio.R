@@ -169,7 +169,7 @@ save(vot_2000_2016, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_
 ###################################################################
 #2. Cleaning and getting it ready for analyse 
 # The main goal here is getting vote margin
-#2.1 Elections 2000
+#2.1 Elections 2000 -----> OK
 #2.2 Elections 2004 -----> OK
 #2.3 Elections 2008 -----> OK
 #2.4 Elections 2012 -----> OK
@@ -179,10 +179,300 @@ load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2000_2016
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2000_2016.RData")
 
 #######Elections 2000
+vot_2000 <- vot_2000_2016[[1]]
+cand_2000 <- cand_2000_2016[[1]]
+
+#To start with, unequal numbers of municipalities in 2000 elections
+length(unique(cand_2000$SIGLA_UE))
+length(unique(vot_2000$CODIGO_MUNICIPIO))
+
+#Excluding places with runoff from first round 
+#because I am interested in vote margin in the decisive round
+e_round2 <- vot_2000 %>% filter(NUM_TURNO == 2) %>% distinct(CODIGO_MUNICIPIO)
+#Excluding places where result changed after election (similar to eleicoes suplementares)
+change <- cand_2000 %>% filter(DESCRICAO_CARGO == "PREFEITO") %>% 
+  filter(DESC_SIT_TOT_TURNO=="RENÚNCIA/FALECIMENTO/CASSAÇÃO APÓS A ELEIÇÃO"|
+           DESC_SIT_TOT_TURNO=="REGISTRO NEGADO APÓS A ELEIÇÃO" | 
+           DESC_SIT_TOT_TURNO=="RENÚNCIA;FALECIMENTO;CASSAÇÃO APÓS A ELEIÇÃO" |
+           DESC_SIT_TOT_TURNO=="RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO" |
+           DES_SITUACAO_CANDIDATURA == "HOMOLOGAÇÃO DE RENÚNCIA") %>% distinct(SIGLA_UE)
+errors_tse <- 24554 #For muncipality SIGLA_UE 24554:  winners listed there took office after winner was moved
+vot_2000v1 <- vot_2000 %>% filter(!CODIGO_MUNICIPIO %in% e_round2$CODIGO_MUNICIPIO, !CODIGO_MUNICIPIO %in% change$SIGLA_UE,
+                                  !CODIGO_MUNICIPIO %in% errors_tse,
+                                  DESCRICAO_CARGO == "PREFEITO")  #primeiro turno, prefeito #removind candidatos that count twice
+cand_2000v1 <- cand_2000 %>% filter(!SIGLA_UE %in% e_round2$CODIGO_MUNICIPIO, !SIGLA_UE %in% change$SIGLA_UE,
+                                    !SIGLA_UE %in% errors_tse,
+                                    DESCRICAO_CARGO == "PREFEITO", DESC_SIT_TOT_TURNO != "#NULO#", DESC_SIT_TOT_TURNO != "") #primeiro turno, prefeito
+change_vot <- vot_2000v1 %>% filter(DESC_SIT_CANDIDATO== "INDEFERIDO" |
+                                      DESC_SIT_CANDIDATO== "INDEFERIDO POR IMPUGNAÇÃO" |
+                                      DESC_SIT_CANDIDATO==  "CASSAÇÃO DO REGISTRO" |
+                                      DESC_SIT_CANDIDATO==  "CANCELAMENTO" |
+                                      DESC_SIT_CANDIDATO==  "FALECIDO") %>% distinct(CODIGO_MUNICIPIO)
+
+vot_2000v1 <- vot_2000v1 %>% filter(!CODIGO_MUNICIPIO %in% change_vot$CODIGO_MUNICIPIO)
+cand_2000v1 <- cand_2000v1 %>% filter(!SIGLA_UE %in% change_vot$CODIGO_MUNICIPIO)
+
+#Temp Unique ID  #not using CPF or TITULO DE ELEITOR BECAUSE OF MISSING DATA and MISSING DATA IN SEQUENCIAL CANDIDATO IN 2000
+cand_2000v1$temp_id <- paste0(cand_2000v1$SIGLA_UE, cand_2000v1$SEQUENCIAL_CANDIDATO, cand_2000v1$SIGLA_UF)
+#vot_2000v1$temp_id <- paste0(vot_2000v1$CODIGO_MUNICIPIO, vot_2000v1$SQ_CANDIDATO, vot_2000v1$SIGLA_UF)
+stopifnot(length(unique(cand_2000v1$temp_id))==nrow(cand_2000v1))
+
+#Selecting candidatos aptos to aggregate votes per municipality 
+#(removing places that had a runoff vote from first rounds and removing eleicoes nao regulares)
+#Not using apto ou nao apto because that is not available
+#included UF to get unique ID
+vot_2000v2 <- vot_2000v1 %>% group_by(CODIGO_MUNICIPIO, NOME_CANDIDATO, SIGLA_UF) %>% 
+  summarize(VOTO_MUN_CAND = sum(TOTAL_VOTOS))
+#Check
+stopifnot(length(unique(vot_2000v2$CODIGO_MUNICIPIO))==length(unique(vot_2000v1$CODIGO_MUNICIPIO)))
+
+#Getting municipality's total vote and candidate vote share 
+vot_2000v3 <- vot_2000v2 %>% group_by(CODIGO_MUNICIPIO, SIGLA_UF) %>% summarize(VOTO_MUN_TOTAL = sum(VOTO_MUN_CAND)) %>% 
+  left_join(vot_2000v2, by = c("CODIGO_MUNICIPIO", "SIGLA_UF")) %>% 
+  mutate(VOTO_CAND_SHARE = VOTO_MUN_CAND/VOTO_MUN_TOTAL) %>% 
+  group_by(CODIGO_MUNICIPIO, SIGLA_UF) %>% mutate(NUMBER_CANDIDATES = n()) 
+#Check
+stopifnot(min(vot_2000v3$NUMBER_CANDIDATES)==1)
+stopifnot(vot_2000v3$VOTO_CAND_SHARE >= 0 & vot_2000v3$VOTO_CAND_SHARE <= 1)
+
+#Merging with candidate information
+#Making sure there are no NAs and keys are unique
+nrow(cand_2000v1 %>% filter(is.na(SIGLA_UE)))==0
+nrow(vot_2000v3 %>% filter(is.na(CODIGO_MUNICIPIO)))==0
+nrow(cand_2000v1 %>% filter(is.na(NOME_CANDIDATO)))==0
+nrow(vot_2000v3 %>% filter(is.na(NOME_CANDIDATO)))==0
+nrow(cand_2000v1 %>% filter(is.na(SIGLA_UF)))==0
+nrow(vot_2000v3 %>% filter(is.na(SIGLA_UF)))==0
+#Creating unique ids (to check merge by three variables, two not enough), 
+vot_2000v3$id_merge <- paste0(vot_2000v3$CODIGO_MUNICIPIO, vot_2000v3$NOME_CANDIDATO, vot_2000v3$SIGLA_UF)
+cand_2000v1$id_merge <- paste0(cand_2000v1$SIGLA_UE, cand_2000v1$NOME_CANDIDATO, cand_2000v1$SIGLA_UF)
+nrow(vot_2000v3) == length(unique(vot_2000v3$id_merge))
+nrow(cand_2000v1) == length(unique(cand_2000v1$id_merge))
+#Merging
+cand_2000v2 <- cand_2000v1 %>% left_join(vot_2000v3, by=c("id_merge"))
+
+#Debugging #which do not merge?
+bugs <- anti_join(cand_2000v2, vot_2000v3, by=c("id_merge"))
+summary(bugs$VOTO_CAND_SHARE) #all NA's
+table(bugs$DESC_SIT_TOT_TURNO) #how can you have eleito is vote share == NA?
+temp <- bugs %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
+#Eliminating cases with NA vote share, eliminating places with only one candidate, and using age rule to break ties
+cand_2000v3 <- cand_2000v2 %>% filter(!is.na(VOTO_CAND_SHARE)) 
+
+cand_2000v4 <- cand_2000v3 %>% filter(NUMBER_CANDIDATES != 1) %>% group_by(SIGLA_UE, SIGLA_UF.x) %>% 
+  mutate(rankvote = rank(-VOTO_CAND_SHARE)) %>% 
+  mutate(rankvoter = ifelse(rankvote == 1.5 & DESC_SIT_TOT_TURNO == "ELEITO", 1,
+                            ifelse(rankvote == 1.5 & DESC_SIT_TOT_TURNO == "NÃO ELEITO", 2, rankvote)))
+#check
+table(cand_2000v4$DESC_SIT_TOT_TURNO, cand_2000v4$rankvoter) 
+
+#######Calculating vote share for eleicoes regulares (places that had runoffs and nao eleicoes suplementares)
+
+#Geting the right base
+vot_2000_runoff <- vot_2000 %>% filter(CODIGO_MUNICIPIO %in% e_round2$CODIGO_MUNICIPIO & DESCRICAO_CARGO == "PREFEITO" 
+                                       & NUM_TURNO==2)
+cand_2000_runoff <- cand_2000 %>% filter(SIGLA_UE %in% e_round2$CODIGO_MUNICIPIO & NUM_TURNO == 2 &
+                                           DESCRICAO_CARGO == "PREFEITO" & DESC_SIT_TOT_TURNO != "#NULO", DESC_SIT_TOT_TURNO != "")
+#Check
+stopifnot(length(unique(cand_2000_runoff$NUM_TITULO_ELEITORAL_CANDIDATO))==nrow(cand_2000_runoff))
+#Generating temp_id
+cand_2000_runoff$temp_id <- paste0(cand_2000_runoff$SIGLA_UE, cand_2000_runoff$SEQUENCIAL_CANDIDATO, cand_2000_runoff$SIGLA_UF)
+stopifnot(length(unique(cand_2000_runoff$temp_id))==nrow(cand_2000_runoff))
+
+#Selecting candidatos a prefeito, aptos to aggregate votes per municipality
+vot_2000_runoffv2 <- vot_2000_runoff %>% group_by(CODIGO_MUNICIPIO, NOME_CANDIDATO, SIGLA_UF) %>% summarize(VOTO_MUN_CAND = sum(TOTAL_VOTOS))
+#Check
+stopifnot(length(unique(vot_2000_runoffv2$CODIGO_MUNICIPIO))==length(unique(vot_2000_runoff$CODIGO_MUNICIPIO)))
+
+#Getting municipality's total vote and candidate vote share and renaming to merge
+vot_2000_runoffv3 <- vot_2000_runoffv2  %>% group_by(CODIGO_MUNICIPIO, SIGLA_UF) %>% 
+  summarize(VOTO_MUN_TOTAL = sum(VOTO_MUN_CAND)) %>%
+  left_join(vot_2000_runoffv2, by=c("CODIGO_MUNICIPIO", "SIGLA_UF")) %>% 
+  mutate(VOTO_CAND_SHARE = VOTO_MUN_CAND/VOTO_MUN_TOTAL) %>% group_by(CODIGO_MUNICIPIO, SIGLA_UF) %>% 
+  mutate(NUMBER_CANDIDATES = n())
+#Checks
+table(vot_2000_runoffv3$NUMBER_CANDIDATES==2)
+summary(vot_2000_runoffv3$VOTO_CAND_SHARE)
+
+#Merging with candidate information 
+#Making sure there are no NAs and keys are unique
+nrow(cand_2000_runoff %>% filter(is.na(SIGLA_UE)))==0
+nrow(vot_2000_runoffv3 %>% filter(is.na(CODIGO_MUNICIPIO)))==0
+nrow(cand_2000_runoff %>% filter(is.na(NOME_CANDIDATO)))==0
+nrow(vot_2000_runoffv3 %>% filter(is.na(NOME_CANDIDATO)))==0
+nrow(cand_2000_runoff %>% filter(is.na(SIGLA_UF)))==0
+nrow(vot_2000_runoffv3 %>% filter(is.na(SIGLA_UF)))==0
+#Creating unique ids (to check merge by three variables, two not enough), 
+vot_2000_runoffv3$id_merge <- paste0(vot_2000_runoffv3$CODIGO_MUNICIPIO, vot_2000_runoffv3$NOME_CANDIDATO, vot_2000_runoffv3$SIGLA_UF)
+cand_2000_runoff$id_merge <- paste0(cand_2000_runoff$SIGLA_UE, cand_2000_runoff$NOME_CANDIDATO, cand_2000_runoff$SIGLA_UF)
+nrow(vot_2000_runoffv3) == length(unique(vot_2000_runoffv3$id_merge))
+nrow(cand_2000_runoff) == length(unique(cand_2000_runoff$id_merge))
+#Merging
+cand_2000_runoffv2 <- cand_2000_runoff %>% left_join(vot_2000_runoffv3, by=c("id_merge"))
+
+#Debugging tactic
+stopifnot(nrow(anti_join(cand_2000_runoff, vot_2000_runoffv3, by=c("id_merge")))==0)
+
+#Ranking votes (no ties, but creating rankvoter varaible to facilitate merge later on)
+cand_2000_runoffv3 <- cand_2000_runoffv2 %>%  group_by(SIGLA_UE, SIGLA_UF.x) %>% 
+  mutate(rankvote = rank(-VOTO_CAND_SHARE)) %>% 
+  mutate(rankvoter = rankvote)
+#check
+table(cand_2000_runoffv3$rankvote, cand_2000_runoffv3$DESC_SIT_TOT_TURNO)
+
+#Binding first round with runoff candidates
+cand_2000v5 <- bind_rows(cand_2000v4, cand_2000_runoffv3)
+
+####Vote margin (share and absolute)
+
+#getting winner and runnerups
+cand_2000v6 <- cand_2000v5 %>% filter(rankvoter== 1 | rankvoter== 2)
+table(cand_2000v6$DESC_SIT_TOT_TURNO)
+
+#Getting vote margins
+muns <- unique(cand_2000v6$SIGLA_UE)
+#Check
+stopifnot(length(unique(muns))==length(muns))
+
+electionsf_2000 <- NULL
+
+for (i in 1:length(muns)){
+  
+  mun <- cand_2000v6[which(cand_2000v6$SIGLA_UE==muns[i]), ]
+  
+  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
+  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
+  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
+  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO" | DESC_SIT_TOT_TURNO == "ELEITO POR QUOCIENTE PARTIDÁRIO")
+  
+  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
+  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
+  
+  electionsf_2000 <- bind_rows(electionsf_2000, margin_winner, margin_runner)
+  print(i)
+  
+} 
+
+#######Calculating vote share for eleicoes nao-regulares
+
+#only with places where results changed after elections
+vot_2000_supv1 <- vot_2000 %>% filter(!CODIGO_MUNICIPIO %in% e_round2$CODIGO_MUNICIPIO, CODIGO_MUNICIPIO  %in% change$SIGLA_UE,
+                                      #CODIGO_MUNICIPIO %in% change_vot$CODIGO_MUNICIPIO,
+                                      DESCRICAO_CARGO == "PREFEITO")  #primeiro turno, prefeito
+cand_2000_supv1 <- cand_2000 %>% filter(!SIGLA_UE %in% e_round2$CODIGO_MUNICIPIO, SIGLA_UE %in% change$SIGLA_UE,
+                                        #SIGLA_UE %in% errors_tse, SIGLA_UE %in% change_vot$CODIGO_MUNICIPIO,
+                                        DESCRICAO_CARGO == "PREFEITO", DESC_SIT_TOT_TURNO != "#NULO#", 
+                                        DESC_SIT_TOT_TURNO != "") #primeiro turno, prefeito
+#Check
+cand_2000_supv1$temp_id <- paste0(cand_2000_supv1$SIGLA_UE, cand_2000_supv1$SEQUENCIAL_CANDIDATO, cand_2000_supv1$SIGLA_UF)
+stopifnot(length(unique(cand_2000_supv1$temp_id))==nrow(cand_2000_supv1))
+
+vot_2000_supv1 <- vot_2000_supv1 %>% filter(DESC_SIT_CANDIDATO != "HOMOLOGAÇÃO DE RENÚNCIA") 
+#Excluding one case with unclear winner
+vot_2000_supv1 <- vot_2000_supv1 %>% filter(CODIGO_MUNICIPIO != 66931) 
+cand_2000_supv1 <- cand_2000_supv1 %>% filter(SIGLA_UE != 66931) 
 
 
+#Selecting candidatos aptos to aggregate votes per municipality 
+#(removing places that had a runoff vote from first rounds and removing eleicoes nao regulares)
+#Not using apto ou nao apto because that is not available
+#included UF to get unique ID
+vot_2000_supv2 <- vot_2000_supv1 %>% group_by(CODIGO_MUNICIPIO, NOME_CANDIDATO, SIGLA_UF) %>% 
+  summarize(VOTO_MUN_CAND = sum(TOTAL_VOTOS))
+#Check
+stopifnot(length(unique(vot_2000_supv2$CODIGO_MUNICIPIO))==length(unique(vot_2000_supv1$CODIGO_MUNICIPIO)))
 
+#Getting municipality's total vote and candidate vote share 
+vot_2000_supv3 <- vot_2000_supv2 %>% group_by(CODIGO_MUNICIPIO, SIGLA_UF) %>% summarize(VOTO_MUN_TOTAL = sum(VOTO_MUN_CAND)) %>% 
+  left_join(vot_2000_supv2, by = c("CODIGO_MUNICIPIO", "SIGLA_UF")) %>% 
+  mutate(VOTO_CAND_SHARE = VOTO_MUN_CAND/VOTO_MUN_TOTAL) %>% 
+  group_by(CODIGO_MUNICIPIO, SIGLA_UF) %>% mutate(NUMBER_CANDIDATES = n()) 
+#Check
+stopifnot(min(vot_2000_supv3$NUMBER_CANDIDATES)==1)
+stopifnot(vot_2000_supv3$VOTO_CAND_SHARE >= 0 & vot_2000_supv3$VOTO_CAND_SHARE <= 1)
 
+#Merging with candidate information
+#Making sure there are no NAs and keys are unique
+nrow(cand_2000_supv1 %>% filter(is.na(SIGLA_UE)))==0
+nrow(vot_2000_supv3 %>% filter(is.na(CODIGO_MUNICIPIO)))==0
+nrow(cand_2000_supv1 %>% filter(is.na(NOME_CANDIDATO)))==0
+nrow(vot_2000_supv3 %>% filter(is.na(NOME_CANDIDATO)))==0
+nrow(cand_2000_supv1 %>% filter(is.na(SIGLA_UF)))==0
+nrow(vot_2000_supv3 %>% filter(is.na(SIGLA_UF)))==0
+#Creating unique ids (to check merge by three variables, two not enough), 
+vot_2000_supv3$id_merge <- paste0(vot_2000_supv3$CODIGO_MUNICIPIO, vot_2000_supv3$NOME_CANDIDATO, vot_2000_supv3$SIGLA_UF)
+cand_2000_supv1$id_merge <- paste0(cand_2000_supv1$SIGLA_UE, cand_2000_supv1$NOME_CANDIDATO, cand_2000_supv1$SIGLA_UF)
+nrow(vot_2000_supv3) == length(unique(vot_2000_supv3$id_merge))
+nrow(cand_2000_supv1) == length(unique(cand_2000_supv1$id_merge))
+#Merging
+cand_2000_supv2 <- cand_2000_supv1 %>% left_join(vot_2000_supv3, by=c("id_merge"))
+
+#Debugging #which do not merge?
+bugs <- anti_join(cand_2000_supv2, vot_2000_supv3, by=c("id_merge"))
+summary(bugs$VOTO_CAND_SHARE) #all NA's
+table(bugs$DESC_SIT_TOT_TURNO) #how can you have eleito is vote share == NA?
+temp <- bugs %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
+#Eliminating cases with NA vote share, eliminating places with only one candidate, and using age rule to break ties
+cand_2000_supv3 <- cand_2000_supv2 %>% filter(!is.na(VOTO_CAND_SHARE)) 
+
+cand_2000_supv4 <- cand_2000_supv3 %>% filter(NUMBER_CANDIDATES != 1) %>% group_by(SIGLA_UE, SIGLA_UF.x) %>% 
+  mutate(rankvote = rank(-VOTO_CAND_SHARE)) %>% 
+  mutate(rankvoter = ifelse(rankvote == 1.5 & DESC_SIT_TOT_TURNO == "ELEITO", 1,
+                            ifelse(rankvote == 1.5 & DESC_SIT_TOT_TURNO == "NÃO ELEITO", 2, rankvote)))
+#check
+table(cand_2000_supv4$DESC_SIT_TOT_TURNO, cand_2000_supv4$rankvoter) 
+
+####Vote margin (share and absolute)
+
+#getting winner and runnerups
+cand_2000_supv5 <- cand_2000_supv4 %>% filter(rankvoter== 1 | rankvoter== 2)
+table(cand_2000_supv5$DESC_SIT_TOT_TURNO) #half and half
+
+#Getting vote margins
+muns_sup <- unique(cand_2000_supv5$SIGLA_UE)
+#Check
+stopifnot(length(unique(muns_sup))==length(muns_sup))
+
+electionsf_sup_2000 <- NULL
+
+for (i in 1:length(muns_sup)){
+  
+  mun <- cand_2000_supv5[which(cand_2000_supv5$SIGLA_UE==muns_sup[i]), ]
+  
+  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
+  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
+  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
+  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
+  
+  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
+  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
+  
+  electionsf_sup_2000 <- bind_rows(electionsf_sup_2000, margin_winner, margin_runner)
+  print(i)
+  
+} 
+
+######### Binding elections (regulares and nao regulares)
+electionsf_2000 <- electionsf_2000 %>% bind_cols(data_frame(TYPE_ELECTION = rep("regular", nrow(electionsf_2000))))  
+electionsf_sup_2000 <- electionsf_sup_2000 %>% bind_cols(data_frame(TYPE_ELECTION = rep("nonregular", nrow(electionsf_sup_2000))))                                            
+
+electionsff_2000 <- bind_rows(electionsf_2000, electionsf_sup_2000)
+
+#Simple Smell tests
+table(electionsff_2000$TYPE_ELECTION)
+table(electionsff_2000$DESC_SIT_TOT_TURNO) #half and half
+#Recoding runoffs
+electionsff_2000 <- electionsff_2000 %>% mutate(DESC_SIT_TOT_TURNO = ifelse(DESC_SIT_TOT_TURNO == "ELEITO POR QUOCIENTE PARTIDÁRIO", "ELEITO", DESC_SIT_TOT_TURNO))
+table(electionsff_2000$rankvoter) #half and half
+
+######## TESTING IDENTIFIERS' INTEGRITY (length of codes, number of municipalities, number of elected mayors, number of nonelected)
+#Municipality's identifier's 
+str(electionsff_2000)
+glimpse(electionsff_2000)
+table(nchar(electionsff_2000$CPF_CANDIDATO)) #existem erros
+table(nchar(electionsff_2000$NUM_TITULO_ELEITORAL_CANDIDATO)) #existem erros
+
+save(electionsff_2000, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000.Rda")
 
 #######Elections 2004
 vot_2004 <- vot_2000_2016[[2]]
