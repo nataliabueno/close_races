@@ -15,7 +15,7 @@ change <- cand_2000 %>% filter(DESCRICAO_CARGO == "PREFEITO") %>%
            DESC_SIT_TOT_TURNO=="REGISTRO NEGADO APÓS A ELEIÇÃO" | 
            DESC_SIT_TOT_TURNO=="RENÚNCIA;FALECIMENTO;CASSAÇÃO APÓS A ELEIÇÃO" |
            DESC_SIT_TOT_TURNO=="RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO" |
-           DES_SITUACAO_CANDIDATURA != "HOMOLOGAÇÃO DE RENÚNCIA") %>% distinct(SIGLA_UE)
+           DES_SITUACAO_CANDIDATURA == "HOMOLOGAÇÃO DE RENÚNCIA") %>% distinct(SIGLA_UE)
 #errors_tse <- 31518 #For muncipality SIGLA_UE 31518: file vot_2004 does not have votes for winning candidate
 vot_2000v1 <- vot_2000 %>% filter(!CODIGO_MUNICIPIO %in% e_round2$CODIGO_MUNICIPIO, !CODIGO_MUNICIPIO %in% change$SIGLA_UE,
                                   DESCRICAO_CARGO == "PREFEITO")  #primeiro turno, prefeito #removind candidatos that count twice
@@ -26,6 +26,8 @@ cand_2000v1 <- cand_2000 %>% filter(!SIGLA_UE %in% e_round2$CODIGO_MUNICIPIO, !S
 cand_2000v1$temp_id <- paste0(cand_2000v1$SIGLA_UE, cand_2000v1$SEQUENCIAL_CANDIDATO, cand_2000v1$SIGLA_UF)
 #vot_2000v1$temp_id <- paste0(vot_2000v1$CODIGO_MUNICIPIO, vot_2000v1$SQ_CANDIDATO, vot_2000v1$SIGLA_UF)
 stopifnot(length(unique(cand_2000v1$temp_id))==nrow(cand_2000v1))
+
+#Making sure no municipality has a repeated candidate
 
 
 #Selecting candidatos aptos to aggregate votes per municipality 
