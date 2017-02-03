@@ -67,8 +67,6 @@ round1v2 <- round1v1 %>% filter(NUMBER_CANDIDATES != 1) %>% group_by(SG_UE) %>%
 #check
 table(round1v2$resultado_des, round1v2$rankvoter) 
 
-
-
 #Getting candidate vote share
 round1v2 <- round1v1 %>% filter(resultado_des %in% c("ELEITO","NÃO ELEITO")) %>% group_by(SG_UE, anoEleicao) %>% summarize(voto_mun_total = sum(voto_total))
 #round1v2 <- round1v1 %>% group_by(SG_UE, anoEleicao) %>% summarize(voto_mun_total = sum(voto_total))

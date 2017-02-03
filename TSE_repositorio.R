@@ -1275,4 +1275,20 @@ load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2004.Rda
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2008.Rda")
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2012.Rda")
 
-names(electionsff_2000)==names(electionsff_2004)
+electionsff_2012 <- electionsff_2012 %>% select(-c(EMAIL_CANDIDATO, data_nasc, age_years, age_years2))
+electionsff_2000 <- electionsff_2000 %>% mutate(NUMERO_CANDIDATO = as.integer(NUMERO_CANDIDATO), 
+                                                COD_SITUACAO_CANDIDATURA = as.integer(COD_SITUACAO_CANDIDATURA),
+                                                NUMERO_PARTIDO = as.integer(NUMERO_PARTIDO), 
+                                                IDADE_DATA_ELEICAO = as.integer(IDADE_DATA_ELEICAO), 
+                                                CODIGO_ESTADO_CIVIL = as.integer(CODIGO_ESTADO_CIVIL), 
+                                                CODIGO_NACIONALIDADE = as.integer(CODIGO_NACIONALIDADE),
+                                                CODIGO_MUNICIPIO_NASCIMENTO = as.integer(CODIGO_MUNICIPIO_NASCIMENTO))
+electionsff_2008 <- electionsff_2008 %>% mutate(NUM_TITULO_ELEITORAL_CANDIDATO = as.character(NUM_TITULO_ELEITORAL_CANDIDATO))
+electionsff_2012 <- electionsff_2012 %>% mutate(NUM_TITULO_ELEITORAL_CANDIDATO = as.character(NUM_TITULO_ELEITORAL_CANDIDATO),
+                                                CPF_CANDIDATO = as.character(CPF_CANDIDATO))
+electionsff <- bind_rows(electionsff_2000, electionsff_2004, electionsff_2008, electionsff_2012)
+save(electionsff, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000_2012.Rda")
+
+Number_Mun <- electionsff %>% group_by(ANO_ELEICAO) %>% 
+              distinct(SIGLA_UE) %>% count()
+table(electionsff$DESC_SIT_TOT_TURNO)
