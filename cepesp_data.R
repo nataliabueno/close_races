@@ -51,15 +51,22 @@ e_round2 <- round1 %>% filter(resultado_des == "2º TURNO") %>% distinct(mun_ele
 round1v1 <- round1 %>% filter(!mun_electionyear %in% e_round2$mun_electionyear) 
 
 #Showing issues with consistency using absolute number of votes (not just vote share)
-#round1v4 <- round1v3 %>% filter(ncandidates != 1) %>% mutate(rankvote = rank(-voto_cand)) %>% 
-#  mutate(rankvoter = ifelse(rankvote == 1.5 & resultado_des == "ELEITO", 1,
-#                            ifelse(rankvote == 1.5 & resultado_des == "NÃO ELEITO", 2, 
-#                                   ifelse(rankvote == 2.5 & titulo==117261490116, 2,
-#                                          ifelse(rankvote == 2.5 & titulo==46038350132, 3, 
-#                                                 ifelse(rankvote == 2.5 & titulo==40299850663, 2,
-#                                                        ifelse(rankvote == 2.5 & titulo==57422710604, 3, rankvote)))))))
-#
-#table(round1v4$resultado_des, round1v4$rankvoter)
+
+#Number of unique municipalities per year
+Number_Mun <- round1 %>% group_by(anoEleicao) %>% 
+              distinct(SG_UE) %>% count()
+#Varies the number of observations per year
+
+round1v1 <- round1 %>% group_by(anoEleicao, SG_UE) %>%
+          mutate(NUMBER_CANDIDATES = n()) 
+
+round1v2 <- round1v1 %>% filter(NUMBER_CANDIDATES != 1) %>% group_by(SG_UE) %>% 
+                mutate(rankvote = rank(voto_total)) %>%  #same as voto nominal for mayors
+                 mutate(rankvoter = ifelse(rankvote == 1.5 & resultado_des == "ELEITO", 1,
+                  ifelse(rankvote == 1.5 & resultado_des == "NÃO ELEITO", 2, rankvote)))
+#check
+table(round1v2$resultado_des, round1v2$rankvoter) 
+
 
 
 #Getting candidate vote share

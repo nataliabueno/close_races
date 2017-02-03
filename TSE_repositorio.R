@@ -472,7 +472,7 @@ glimpse(electionsff_2000)
 table(nchar(electionsff_2000$CPF_CANDIDATO)) #existem erros
 table(nchar(electionsff_2000$NUM_TITULO_ELEITORAL_CANDIDATO)) #existem erros
 #Renaming and cleaning up for binding
-electionsff_2000 <- electionsff_2000 %>% select(-c(NOME_CANDIDATO.y,SIGLA_UF.y, temp_id, id_merge)) %>%
+electionsff_2000 <- electionsff_2000 %>% select(-c(NOME_CANDIDATO.y,SIGLA_UF.y, temp_id, id_merge, CODIGO_MUNICIPIO)) %>%
                     rename(SIGLA_UF = SIGLA_UF.x, NOME_CANDIDATO = NOME_CANDIDATO.x)
 
 save(electionsff_2000, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000.Rda")
@@ -1269,5 +1269,10 @@ table(nchar(electionsff_2012$SEQUENCIAL_CANDIDATO)) #erros ou dois tipos de sequ
 
 #save(electionsff_2012, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2012.Rda")
 
+########Binding all years
+load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000.Rda")
+load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2004.Rda")
+load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2008.Rda")
+load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2012.Rda")
 
-
+names(electionsff_2000)==names(electionsff_2004)
