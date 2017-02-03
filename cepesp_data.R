@@ -36,6 +36,10 @@ round1 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/original_data/2000-200
 round2 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/original_data/2000-2004-2008-2012-2016_Prefeito_Municipio_Candidato_2turno.csv",
                    col_types = cols(.default = col_character(), voto_total= col_number()), locale=br) 
 
+#Excluding 2016 at the moment
+round1 <- round1 %>% filter(anoEleicao != 2016)
+round2 <- round2 %>% filter(anoEleicao != 2016)
+
 #creating municipality election year key and removing brancos/nulos
 round1 <- round1 %>% mutate(mun_electionyear = paste0(SG_UE, anoEleicao)) %>% filter(cargo_cod!=0)
 round2 <- round2 %>% mutate(mun_electionyear = paste0(SG_UE, anoEleicao)) %>% filter(cargo_cod!=0)

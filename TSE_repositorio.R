@@ -472,7 +472,8 @@ glimpse(electionsff_2000)
 table(nchar(electionsff_2000$CPF_CANDIDATO)) #existem erros
 table(nchar(electionsff_2000$NUM_TITULO_ELEITORAL_CANDIDATO)) #existem erros
 #Renaming and cleaning up for binding
-
+electionsff_2000 <- electionsff_2000 %>% select(-c(NOME_CANDIDATO.y,SIGLA_UF.y, temp_id, id_merge)) %>%
+                    rename(SIGLA_UF = SIGLA_UF.x, NOME_CANDIDATO = NOME_CANDIDATO.x)
 
 save(electionsff_2000, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000.Rda")
 
