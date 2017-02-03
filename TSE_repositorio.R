@@ -196,7 +196,7 @@ change <- cand_2000 %>% filter(DESCRICAO_CARGO == "PREFEITO") %>%
            DESC_SIT_TOT_TURNO=="RENÚNCIA;FALECIMENTO;CASSAÇÃO APÓS A ELEIÇÃO" |
            DESC_SIT_TOT_TURNO=="RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO" |
            DES_SITUACAO_CANDIDATURA == "HOMOLOGAÇÃO DE RENÚNCIA") %>% distinct(SIGLA_UE)
-errors_tse <- 24554 #For muncipality SIGLA_UE 24554:  winners listed there took office after winner was moved
+errors_tse <- c(24554, 27715) #For muncipality SIGLA_UE 24554:  winners listed there took office after winner was moved, and all 27715 candidates are sob judice
 vot_2000v1 <- vot_2000 %>% filter(!CODIGO_MUNICIPIO %in% e_round2$CODIGO_MUNICIPIO, !CODIGO_MUNICIPIO %in% change$SIGLA_UE,
                                   !CODIGO_MUNICIPIO %in% errors_tse,
                                   DESCRICAO_CARGO == "PREFEITO")  #primeiro turno, prefeito #removind candidatos that count twice
@@ -471,6 +471,8 @@ str(electionsff_2000)
 glimpse(electionsff_2000)
 table(nchar(electionsff_2000$CPF_CANDIDATO)) #existem erros
 table(nchar(electionsff_2000$NUM_TITULO_ELEITORAL_CANDIDATO)) #existem erros
+#Renaming and cleaning up for binding
+
 
 save(electionsff_2000, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000.Rda")
 
