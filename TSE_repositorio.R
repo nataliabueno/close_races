@@ -319,6 +319,7 @@ cand_2000_runoffv3 <- cand_2000_runoffv2 %>%  group_by(SIGLA_UE, SIGLA_UF.x) %>%
   mutate(rankvoter = rankvote)
 #check
 table(cand_2000_runoffv3$rankvote, cand_2000_runoffv3$DESC_SIT_TOT_TURNO)
+cand_2000_runoffv3 <- cand_2000_runoffv3 %>% mutate(DESC_SIT_TOT_TURNO = ifelse(DESC_SIT_TOT_TURNO == "ELEITO POR QUOCIENTE PARTIDÁRIO", "ELEITO", DESC_SIT_TOT_TURNO))
 
 #Binding first round with runoff candidates
 cand_2000v5 <- bind_rows(cand_2000v4, cand_2000_runoffv3)
@@ -343,7 +344,7 @@ for (i in 1:length(muns)){
   vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
   vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
   winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO" | DESC_SIT_TOT_TURNO == "ELEITO POR QUOCIENTE PARTIDÁRIO")
+  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
   
   margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
   margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
@@ -461,8 +462,6 @@ electionsff_2000 <- bind_rows(electionsf_2000, electionsf_sup_2000)
 #Simple Smell tests
 table(electionsff_2000$TYPE_ELECTION)
 table(electionsff_2000$DESC_SIT_TOT_TURNO) #half and half
-#Recoding runoffs
-electionsff_2000 <- electionsff_2000 %>% mutate(DESC_SIT_TOT_TURNO = ifelse(DESC_SIT_TOT_TURNO == "ELEITO POR QUOCIENTE PARTIDÁRIO", "ELEITO", DESC_SIT_TOT_TURNO))
 table(electionsff_2000$rankvoter) #half and half
 
 ######## TESTING IDENTIFIERS' INTEGRITY (length of codes, number of municipalities, number of elected mayors, number of nonelected)
