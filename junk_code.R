@@ -43,3 +43,8 @@ temp <- elections_cepesp2 %>% filter(vote_margin_abs == min(vote_margin_abs))
 
 temp0 <- elections_tse2 %>% filter(vote_margin_share == max(vote_margin_share))
 max(temp0$vote_margin_share)
+
+
+temp <- diffs %>% filter(yearid == 200418716)
+temp <- diffs %>% filter(yearid == 200424112) 
+temp <- diffs %>% filter(yearid == 200422250) 
