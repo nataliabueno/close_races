@@ -87,3 +87,26 @@ dim(diffs)
 dim(diffs_total)
 
 #Looking at 2012 cases
+temp <- diffs %>% filter(yearid == 201276511) #dados LN correto
+temp <- diffs %>% filter(yearid == 201278255) #dados LN correto
+temp <- diffs %>% filter(yearid == 201280551) #dados NB correto
+temp <- diffs %>% filter(yearid == 201286177) #dados LN correto
+temp <- diffs %>% filter(yearid == 201289001) #dados LN correto
+temp <- diffs %>% filter(yearid == 201290190) #dados NB correto
+
+
+#Looking at 2008 cases
+temp <- diffs %>% filter(yearid == 200811355) #dados NB coreto
+temp <- diffs %>% filter(yearid == 200811371) #dados NB correto (very close tp LN)
+temp <- diffs %>% filter(yearid == 200821873) #dados NB correto
+temp <- diffs %>% filter(yearid == 200821750) #dados NB correto
+temp <- diffs %>% filter(yearid == 200821296) #dados NB correto
+temp <- diffs %>% filter(yearid == 200815717) #dados NB correto
+
+#Looking at 2004 cases
+
+
+
+
+#Looking at 2000 cases
+
