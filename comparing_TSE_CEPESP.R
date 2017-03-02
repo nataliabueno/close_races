@@ -97,6 +97,11 @@ load("~/Dropbox/LOCAL_ELECTIONS/LN_data/prefeitos_margin_a.Rda")
 load("~/Dropbox/LOCAL_ELECTIONS/LN_data/prefeitos_margin_b.Rda")
 
 #Comparing number of muncipalities
+head(prefeitos_a)
+table(prefeitos_a$year)
+
+prefeitos_a <- as_tibble(prefeitos_a)
+prefeitos_a <- prefeitos_a %>% filter(year != 2016)
 
 
 #Comparing vote margin in places that are in both datasets
