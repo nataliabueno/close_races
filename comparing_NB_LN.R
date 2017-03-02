@@ -26,15 +26,64 @@ head(prefeitos_a)
 table(prefeitos_a$year)
 
 prefeitos_a <- as_tibble(prefeitos_a)
-prefeitos_a <- prefeitos_a %>% filter(year != 2016)
+prefeitos_a <- prefeitos_a %>% filter(year != 2016) #not in NB data
 
 #Number of municipalities in NB 
 Number_Mun <- electionstse %>% group_by(ANO_ELEICAO) %>% 
   distinct(SIGLA_UE) %>% count()
 table(electionstse$DESC_SIT_TOT_TURNO)
+
+#NB number of muns
 Number_Mun
+#Number of muns LN
+table(prefeitos_a$year)
+
+#Different number of municipalities in all year
+#Difference by year
+Number_Mun[,2] - as.numeric(table(prefeitos_a$year))
+
+#Getting NB data in same format as LN data
+electionstse1 <- electionstse %>% filter(vote_margin_share > 0) 
+
+#Creating ids
+prefeitos_a <- prefeitos_a %>% mutate(yearid = paste0(year, muni_code))
+electionstse1 <- electionstse1 %>% mutate(yearid = paste0(ANO_ELEICAO, SIGLA_UE))
 
 #Comparing vote margin in places that are in both datasets
+common <- intersect(prefeitos_a$yearid, electionstse1$yearid)
 
 
+#Getting vote margins for common municipalities
+prefeitos_a2 <- prefeitos_a[prefeitos_a$yearid %in% common,]
+electionstse2 <- electionstse1[electionstse1$yearid %in% common,]
 
+#Two results for this nonregular election
+dups <- electionstse2[duplicated(electionstse2$yearid),]
+
+#Excluding it for now from both #to check in NB data later
+prefeitos_a2 <- prefeitos_a2 %>% filter(yearid != 200873059)
+electionstse2 <- electionstse2 %>% filter(yearid != 200873059)
+
+#Summary stats
+summary(prefeitos_a2$V3)
+summary(electionstse2$vote_margin_share)
+prefeitos_a2 <- arrange(prefeitos_a2, yearid)
+electionstse2 <- arrange(electionstse2, yearid)
+table(prefeitos_a2$V3==electionstse2$vote_margin_share)
+
+#Merge data
+electionstse3 <- electionstse2 %>% select(yearid, SIGLA_UE, ANO_ELEICAO, 
+                                          vote_margin_share, VOTO_MUN_TOTAL, SIGLA_UF, DESCRICAO_UE)
+
+both <- electionstse3 %>% left_join(prefeitos_a2, by = "yearid")
+all.equal(both$V3, both$vote_margin_share)
+elementwise.all.equal <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
+table(elementwise.all.equal(both$V3, both$vote_margin_share))
+diffs_margin <- both[!elementwise.all.equal(both$V3, both$vote_margin_share),]
+diffs_total <- both[!elementwise.all.equal(both$totalVotesMun, both$VOTO_MUN_TOTAL),]
+
+table(diffs$ANO_ELEICAO)
+dim(diffs)
+dim(diffs_total)
+
+#Looking at 2012 cases
