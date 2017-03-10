@@ -476,7 +476,7 @@ electionsff_2000 <- electionsff_2000 %>% select(-c(NOME_CANDIDATO.y,SIGLA_UF.y, 
 
 save(electionsff_2000, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000.Rda")
 
-#######Elections 2004   #BEGIN HERE
+#######Elections 2004  
 vot_2004 <- vot_2000_2016[[2]]
 cand_2004 <- cand_2000_2016[[2]]
 
@@ -490,9 +490,13 @@ e_round2 <- vot_2004 %>% filter(NUM_TURNO == 2) %>% distinct(SIGLA_UE)
 #Excluding places where result changed after election (similar to eleicoes suplementares)
 change <- cand_2004 %>% filter(DESCRICAO_CARGO == "PREFEITO") %>% 
           filter(DESC_SIT_TOT_TURNO=="RENÚNCIA/FALECIMENTO/CASSAÇÃO APÓS A ELEIÇÃO"|
-          DESC_SIT_TOT_TURNO=="REGISTRO NEGADO APÓS A ELEIÇÃO" | 
+          DESC_SIT_TOT_TURNO=="REGISTRO NEGADO APÓS A ELEIÇÃO" |
           DESC_SIT_TOT_TURNO=="RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO") %>% distinct(SIGLA_UE)
 errors_tse <- 31518 #For muncipality SIGLA_UE 31518: file vot_2004 does not have votes for winning candidate
+errors_tse_type1 <- vot_2004 %>% filter(DESC_SIT_CAND_TOT == "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO") %>% distinct(SIGLA_UE)    
+#candidates who replaced candidates with "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO" are not in the
+#candidates database only in the votacao_mun_zona database
+  
 vot_2004v1 <- vot_2004 %>% filter(!SIGLA_UE %in% e_round2$SIGLA_UE, !SIGLA_UE %in% change$SIGLA_UE,
                                   !SIGLA_UE %in% errors_tse,
                                   DESCRICAO_CARGO == "PREFEITO")  #primeiro turno, prefeito

@@ -109,6 +109,8 @@ temp <- diffs %>% filter(yearid == 200412564) #depends on how to count sob judic
 temp <- diffs %>% filter(yearid == 200413692) 
 #both wrong, double counting, empty descricao status
 
+#In both of these cases, candidate who replaced the candidate that left is not in the candidates database, only in the votacao database
+
 
 #Looking at 2000 cases
 temp <- diffs %>% filter(yearid == 200013471) #NB correct, count sob judice
