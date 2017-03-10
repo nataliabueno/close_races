@@ -30,7 +30,7 @@ prefeitos_a <- prefeitos_a %>% filter(year != 2016) #not in NB data
 
 #Number of municipalities in NB 
 Number_Mun <- electionstse %>% group_by(ANO_ELEICAO) %>% 
-  distinct(SIGLA_UE) %>% count()
+              distinct(SIGLA_UE) %>% count()
 table(electionstse$DESC_SIT_TOT_TURNO)
 
 #NB number of muns
@@ -86,6 +86,11 @@ table(diffs$ANO_ELEICAO)
 dim(diffs)
 dim(diffs_total)
 
+#Getting original cases
+load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2000_2016.RData")
+vot_2012 <- vot_2000_2016[[4]]
+
+
 #Looking at 2012 cases
 temp <- diffs %>% filter(yearid == 201276511) #LN correto para eleicao, NB correto para eleicao suplementar
 temp <- diffs %>% filter(yearid == 201278255) #LN correto para eleicao, NB correto para eleicao suplementar
@@ -100,11 +105,13 @@ temp <- diffs %>% filter(yearid == 200821750) #dados NB correto
 
 #Looking at 2004 cases
 temp <- diffs %>% filter(yearid == 200412564) #depends on how to count sob judice
-temp <- diffs %>% filter(yearid == 200413692) #depends on how to count renuncia, but LN seems rights
+#NB vote count is different, LN is correct, mine is double counting, make sure party is correct
+temp <- diffs %>% filter(yearid == 200413692) 
+#both wrong, double counting, empty descricao status
 
 
 #Looking at 2000 cases
-temp <- diffs %>% filter(yearid == 200013471) #depends on how to count sob judice
-temp <- diffs %>% filter(yearid == 200013552) #unclear, but NB seems right
+temp <- diffs %>% filter(yearid == 200013471) #NB correct, count sob judice
+temp <- diffs %>% filter(yearid == 200013552) #NB correct, count sob judice
  
 

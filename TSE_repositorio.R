@@ -1,6 +1,6 @@
 ###################################################################
 ############# Downloading, Organizing and Cleaning Electoral Data
-#0. Download TSE repositorio data
+#0. Download TSE repositorio data #TO DO
 #1. Combine and merge
 #2. Clean and get it ready for use
 ###################################################################
@@ -19,7 +19,7 @@ library(tidyverse)
 library(eeptools)
 
 ###################################################################
-#0. Downloading
+#0. Downloading #TO DO
 ###################################################################
 
 
@@ -170,7 +170,7 @@ save(vot_2000_2016, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_
 #2. Cleaning and getting it ready for analyse 
 # The main goal here is getting vote margin
 #2.1 Elections 2000 -----> OK
-#2.2 Elections 2004 -----> OK
+#2.2 Elections 2004 -----> FIX 
 #2.3 Elections 2008 -----> OK
 #2.4 Elections 2012 -----> OK
 ###################################################################
@@ -476,7 +476,7 @@ electionsff_2000 <- electionsff_2000 %>% select(-c(NOME_CANDIDATO.y,SIGLA_UF.y, 
 
 save(electionsff_2000, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000.Rda")
 
-#######Elections 2004
+#######Elections 2004   #BEGIN HERE
 vot_2004 <- vot_2000_2016[[2]]
 cand_2004 <- cand_2000_2016[[2]]
 
