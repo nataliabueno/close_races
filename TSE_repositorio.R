@@ -782,57 +782,58 @@ cand_vot_2004_err <- vot_2004_errv2 %>% filter(DESC_SIT_CANDIDATO != "DEFERIDO" 
 cand_2004_errv2 <-  cand_2004_errv1 %>% filter(DESC_SIT_TOT_TURNO != "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO") #excluding canidates who are replaced
 cand_vot_2004_errv1 <- cand_vot_2004_err %>% select(ANO_ELEICAO, CODIGO_CARGO, DATA_GERACAO, DESCRICAO_CARGO, DESCRICAO_ELEICAO,
                                                     HORA_GERACAO, NOME_CANDIDATO, NOME_COLIGACAO, 
-                                                    NOME_PARTIDO, NOME_URNA_CANDIDATO, NUM_TURNO,)
-  
-  rename(CODIGO_SIT_CAND_TOT = COD_SIT_CAND_SUPERIOR,
-                                                    ) #select common variables and add NA to missing data on candidate covariates
-
-COD_GRAU_INSTRUCAO
-CODIGO_ESTADO_CIVIL
-CODIGO_ESTADO_CIVIL
-
+                                                    NOME_PARTIDO, NOME_URNA_CANDIDATO, NUM_TURNO, NUMERO_CAND, NUMERO_PARTIDO,
+                                                    SIGLA_PARTIDO, SQ_CANDIDATO,  SIGLA_UE, SIGLA_UF, SQ_CANDIDATO) %>% 
+                                                    rename(NUMERO_CANDIDATO = NUMERO_CAND, SEQUENCIAL_CANDIDATO = SQ_CANDIDATO)
 #adding missing candidates to candidates database
-names(cand_2004_errv2)
+missing_cols <- c("DESCRICAO_UE", "CPF_CANDIDATO", "NOME_URNA_CANDIDATO", "COD_SITUACAO_CANDIDATURA", "DES_SITUACAO_CANDIDATURA",
+ "CODIGO_LEGENDA", "SIGLA_LEGENDA",  "COMPOSICAO_LEGENDA",              
+ "CODIGO_OCUPACAO", "DESCRICAO_OCUPACAO", "DATA_NASCIMENTO", "NUM_TITULO_ELEITORAL_CANDIDATO",
+ "IDADE_DATA_ELEICAO", "CODIGO_SEXO", "DESCRICAO_SEXO", "COD_GRAU_INSTRUCAO",         
+ "DESCRICAO_GRAU_INSTRUCAO", "CODIGO_ESTADO_CIVIL", "DESCRICAO_ESTADO_CIVIL", "CODIGO_NACIONALIDADE",          
+ "DESCRICAO_NACIONALIDADE", "SIGLA_UF_NASCIMENTO", "CODIGO_MUNICIPIO_NASCIMENTO", "NOME_MUNICIPIO_NASCIMENTO",    
+ "DESPESA_MAX_CAMPANHA", "COD_SIT_TOT_TURNO", "DESC_SIT_TOT_TURNO")
 
+missing <- matrix(NA, 90, length(missing_cols))
+colnames(missing) <- missing_cols
+missing <- as_tibble(missing)
 
-###Not yet here
-cand_2004_supv2 <- cand_2004_errv1 %>% left_join(vot_2004_supv3, by=c("SIGLA_UE", "SEQUENCIAL_CANDIDATO", "SIGLA_UF"))
+cand_vot_2004_errv3 <- bind_cols(cand_vot_2004_errv1, missing)
 
+cand_2004_errv4 <- bind_rows(cand_2004_errv2, cand_vot_2004_errv3)
+
+#Merging corrected candidate data with votes data
+cand_2004_errv5 <- cand_2004_errv4 %>% left_join(vot_2004_errv4, by=c("SIGLA_UE", "SEQUENCIAL_CANDIDATO", "SIGLA_UF"))
+
+#Okay to remove NAs in VOTO_MUN_TOTAL because these candidates did not run
+cand_2004_errv6 <- cand_2004_errv5 %>% filter(!is.na(VOTO_MUN_CAND))
 #Debugging #which do not merge?
-bugs <- anti_join(cand_2004_supv2, vot_2004_supv3, by=c("SIGLA_UE", "SEQUENCIAL_CANDIDATO", "SIGLA_UF"))
-summary(bugs$VOTO_CAND_SHARE) #all NA's
+bugs <- anti_join(cand_2004_errv4, vot_2004_errv4, by=c("SIGLA_UE", "SEQUENCIAL_CANDIDATO", "SIGLA_UF"))
 #View(bugs %>% filter(DES_SITUACAO_CANDIDATURA=="DEFERIDO")) #situacao turno == Nao eleito (3), Why?
 table(bugs$DESC_SIT_TOT_TURNO)
 
-#Eliminating cases with NA vote share, eliminating places with only one candidate, and using age rule to break ties
-cand_2004_supv3 <- cand_2004_supv2 %>% filter(!is.na(VOTO_CAND_SHARE)) 
-
-cand_2004_supv4 <- cand_2004_supv3 %>% filter(NUMBER_CANDIDATES != 1) %>% group_by(SIGLA_UE, SIGLA_UF) %>% 
+cand_2004_errv7 <- cand_2004_errv6 %>% group_by(SIGLA_UE, SIGLA_UF) %>% 
   mutate(rankvote = rank(-VOTO_CAND_SHARE)) %>% 
   mutate(rankvoter = ifelse(rankvote == 1.5 & DESC_SIT_TOT_TURNO == "ELEITO", 1,
                             ifelse(rankvote == 1.5 & DESC_SIT_TOT_TURNO == "NÃO ELEITO", 2, rankvote)))
-cand_2004_supv5 <- cand_2004_supv4 %>% mutate(DESC_SIT_TOT_TURNO = ifelse(rankvote == 1 & 
-                                                                            DESC_SIT_TOT_TURNO == "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO", "ELEITO",
-                                                                          ifelse(rankvote == 2 & DESC_SIT_TOT_TURNO == "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO", 
-                                                                                 "NÃO ELEITO", DESC_SIT_TOT_TURNO)))
-table(cand_2004_supv5$DESC_SIT_TOT_TURNO, cand_2004_supv5$rankvoter) 
+table(cand_2004_errv7$DESC_SIT_TOT_TURNO, cand_2004_errv7$rankvoter) #why not equal eleito and nao eleito? #Begin here
 
 ####Vote margin (share and absolute)
 
 #getting winner and runnerups
-cand_2004_supv6 <- cand_2004_supv5 %>% filter(rankvoter== 1 | rankvoter== 2)
-table(cand_2004_supv6$DESC_SIT_TOT_TURNO) #half and half
+cand_2004_errv8 <- cand_2004_errv7 %>% filter(rankvoter== 1 | rankvoter== 2)
+table(cand_2004_errv8$DESC_SIT_TOT_TURNO) #why not equal eleito and nao eleito? #Begin here # should be half and half
 
 #Getting vote margins
-muns_sup <- unique(cand_2004_supv6$SIGLA_UE)
+muns_err <- unique(cand_2004_errv8$SIGLA_UE)
 #Check
 stopifnot(length(unique(muns_sup))==length(muns_sup))
 
-electionsf_sup_2004 <- NULL
+electionsf_err_2004 <- NULL
 
-for (i in 1:length(muns_sup)){
+for (i in 1:length(muns_err)){
   
-  mun <- cand_2004_supv6[which(cand_2004_supv6$SIGLA_UE==muns_sup[i]), ]
+  mun <- cand_2004_errv8[which(cand_2004_errv8$SIGLA_UE==muns_err[i]), ]
   
   vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
   vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
@@ -842,13 +843,10 @@ for (i in 1:length(muns_sup)){
   margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
   margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
   
-  electionsf_sup_2004 <- bind_rows(electionsf_sup_2004, margin_winner, margin_runner)
+  electionsf_err_2004 <- bind_rows(electionsf_err_2004, margin_winner, margin_runner)
   print(i)
   
 } 
-
-
-
 
 ######### Binding elections (regulares and nao regulares)
 electionsf_2004 <- electionsf_2004 %>% bind_cols(data_frame(TYPE_ELECTION = rep("regular", nrow(electionsf_2004))))  
