@@ -739,43 +739,64 @@ vot_2004_errv1 <- vot_2004 %>% filter(SIGLA_UE %in% errors_tse_type1$SIGLA_UE,
 cand_2004_errv1 <- cand_2004 %>% filter(SIGLA_UE %in% errors_tse_type1$SIGLA_UE,
                                         DESCRICAO_CARGO == "PREFEITO") 
 #Check
-stopifnot(length(unique(cand_2004_supv1$NUM_TITULO_ELEITORAL_CANDIDATO))==nrow(cand_2004_supv1))
+stopifnot(length(unique(cand_2004_errv1$NUM_TITULO_ELEITORAL_CANDIDATO))==nrow(cand_2004_errv1))
+
+#Removing candidates substituidos from vot_2004 to avoid double counting
+vot_2004_errv2 <- vot_2004_errv1 %>% filter(DESC_SIT_CAND_TOT != "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO")
 
 #Selecting candidatos aptos to aggregate votes per municipality 
 #(removing places that had a runoff vote from first rounds and removing eleicoes nao regulares)
 #Not using apto ou nao apto because that is not available
 #included UF to get unique ID
-vot_2004_supv2 <- vot_2004_supv1 %>% group_by(SIGLA_UE, SQ_CANDIDATO, SIGLA_UF) %>% 
-  summarize(VOTO_MUN_CAND = sum(TOTAL_VOTOS))
+vot_2004_errv3 <- vot_2004_errv2 %>% group_by(SIGLA_UE, SQ_CANDIDATO, SIGLA_UF) %>% 
+                           summarize(VOTO_MUN_CAND = sum(TOTAL_VOTOS))
 #Check
-stopifnot(length(unique(vot_2004_supv2$SIGLA_UE))==length(unique(vot_2004_supv1$SIGLA_UE)))
+stopifnot(length(unique(vot_2004_errv3$SIGLA_UE))==length(unique(vot_2004_errv1$SIGLA_UE)))
 
 #Getting municipality's total vote and candidate vote share and renaming to merge
-vot_2004_supv3 <- vot_2004_supv2 %>% group_by(SIGLA_UE, SIGLA_UF) %>% summarize(VOTO_MUN_TOTAL = sum(VOTO_MUN_CAND)) %>% 
-  left_join(vot_2004_supv2, by = c("SIGLA_UE", "SIGLA_UF")) %>% 
+vot_2004_errv4 <- vot_2004_errv3 %>% group_by(SIGLA_UE, SIGLA_UF) %>% summarize(VOTO_MUN_TOTAL = sum(VOTO_MUN_CAND)) %>% 
+  left_join(vot_2004_errv3, by = c("SIGLA_UE", "SIGLA_UF")) %>% 
   mutate(VOTO_CAND_SHARE = VOTO_MUN_CAND/VOTO_MUN_TOTAL) %>% 
   group_by(SIGLA_UE, SIGLA_UF) %>% mutate(NUMBER_CANDIDATES = n()) %>% 
   rename(SEQUENCIAL_CANDIDATO = SQ_CANDIDATO)
 #Check
-stopifnot(vot_2004_supv3$VOTO_CAND_SHARE >= 0 & vot_2004_supv3$VOTO_CAND_SHARE <= 1)
-stopifnot(min(vot_2004_supv3$NUMBER_CANDIDATES)==1)
+stopifnot(vot_2004_errv4$VOTO_CAND_SHARE >= 0 & vot_2004_errv4$VOTO_CAND_SHARE <= 1)
 
 #Merging with candidate information
 #Making sure there are no NAs and keys are unique
-nrow(cand_2004_supv1 %>% filter(is.na(SIGLA_UE)))==0
-nrow(vot_2004_supv3 %>% filter(is.na(SIGLA_UE)))==0
-nrow(cand_2004_supv1 %>% filter(is.na(SEQUENCIAL_CANDIDATO)))==0
-nrow(vot_2004_supv3 %>% filter(is.na(SEQUENCIAL_CANDIDATO)))==0
-nrow(cand_2004_supv1 %>% filter(is.na(SIGLA_UF)))==0
-nrow(vot_2004_supv3 %>% filter(is.na(SIGLA_UF)))==0
+nrow(cand_2004_errv1 %>% filter(is.na(SIGLA_UE)))==0
+nrow(vot_2004_errv4 %>% filter(is.na(SIGLA_UE)))==0
+nrow(cand_2004_errv1 %>% filter(is.na(SEQUENCIAL_CANDIDATO)))==0
+nrow(vot_2004_errv4 %>% filter(is.na(SEQUENCIAL_CANDIDATO)))==0
+nrow(cand_2004_errv1 %>% filter(is.na(SIGLA_UF)))==0
+nrow(vot_2004_errv4 %>% filter(is.na(SIGLA_UF)))==0
 #Creating unique ids (to check merge by three variables, two not enough), it's okay, they are unique #after checking once, no need to create it
 #vot_2004v3$id_merge <- paste0(vot_2004v3$SIGLA_UE, vot_2004v3$SEQUENCIAL_CANDIDATO, vot_2004v3$SIGLA_UF)
 #cand_2004v1$id_merge <- paste0(cand_2004v1$SIGLA_UE, cand_2004v1$SEQUENCIAL_CANDIDATO, cand_2004v1$SIGLA_UF)
 #nrow(vot_2004v3) == length(unique(vot_2004v3$id_merge))
 #row(cand_2004v1) == length(unique(cand_2004v1$id_merge))
 
-#Merging
-cand_2004_supv2 <- cand_2004_supv1 %>% left_join(vot_2004_supv3, by=c("SIGLA_UE", "SEQUENCIAL_CANDIDATO", "SIGLA_UF"))
+#Merging is different now because substitute candidates are not
+# in candidates database
+cand_vot_2004_err <- vot_2004_errv2 %>% filter(DESC_SIT_CANDIDATO != "DEFERIDO" & DESC_SIT_CANDIDATO != "SUB JUDICE") #getting data of candidates who are left out of candidates database
+cand_2004_errv2 <-  cand_2004_errv1 %>% filter(DESC_SIT_TOT_TURNO != "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO") #excluding canidates who are replaced
+cand_vot_2004_errv1 <- cand_vot_2004_err %>% select(ANO_ELEICAO, CODIGO_CARGO, DATA_GERACAO, DESCRICAO_CARGO, DESCRICAO_ELEICAO,
+                                                    HORA_GERACAO, NOME_CANDIDATO, NOME_COLIGACAO, 
+                                                    NOME_PARTIDO, NOME_URNA_CANDIDATO, NUM_TURNO,)
+  
+  rename(CODIGO_SIT_CAND_TOT = COD_SIT_CAND_SUPERIOR,
+                                                    ) #select common variables and add NA to missing data on candidate covariates
+
+COD_GRAU_INSTRUCAO
+CODIGO_ESTADO_CIVIL
+CODIGO_ESTADO_CIVIL
+
+#adding missing candidates to candidates database
+names(cand_2004_errv2)
+
+
+###Not yet here
+cand_2004_supv2 <- cand_2004_errv1 %>% left_join(vot_2004_supv3, by=c("SIGLA_UE", "SEQUENCIAL_CANDIDATO", "SIGLA_UF"))
 
 #Debugging #which do not merge?
 bugs <- anti_join(cand_2004_supv2, vot_2004_supv3, by=c("SIGLA_UE", "SEQUENCIAL_CANDIDATO", "SIGLA_UF"))
@@ -832,8 +853,9 @@ for (i in 1:length(muns_sup)){
 ######### Binding elections (regulares and nao regulares)
 electionsf_2004 <- electionsf_2004 %>% bind_cols(data_frame(TYPE_ELECTION = rep("regular", nrow(electionsf_2004))))  
 electionsf_sup_2004 <- electionsf_sup_2004 %>% bind_cols(data_frame(TYPE_ELECTION = rep("nonregular", nrow(electionsf_sup_2004))))                                            
+electionsf_err_2004 <- electionsf_err_2004 %>% bind_cols(data_frame(TYPE_ELECTION = rep("nonregular", nrow(electionsf_err_2004))))                                            
 
-electionsff_2004 <- bind_rows(electionsf_2004, electionsf_sup_2004)
+electionsff_2004 <- bind_rows(electionsf_2004, electionsf_sup_2004, electionsf_err_2004)
 
 #Simple Smell tests
 table(electionsff_2004$TYPE_ELECTION)
