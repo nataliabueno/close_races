@@ -498,10 +498,10 @@ errors_tse_type1 <- vot_2004 %>% filter(DESC_SIT_CAND_TOT == "RENÚNCIA/FALECIME
 #candidates database only in the votacao_mun_zona database
   
 vot_2004v1 <- vot_2004 %>% filter(!SIGLA_UE %in% e_round2$SIGLA_UE, !SIGLA_UE %in% change$SIGLA_UE,
-                                  !SIGLA_UE %in% errors_tse,
+                                  !SIGLA_UE %in% errors_tse, !SIGLA_UE %in% errors_tse_type1$SIGLA_UE,
                                   DESCRICAO_CARGO == "PREFEITO")  #primeiro turno, prefeito
 cand_2004v1 <- cand_2004 %>% filter(!SIGLA_UE %in% e_round2$SIGLA_UE, !SIGLA_UE %in% change$SIGLA_UE,
-                                    !SIGLA_UE %in% errors_tse,
+                                    !SIGLA_UE %in% errors_tse, !SIGLA_UE %in% errors_tse, !SIGLA_UE %in% errors_tse_type1$SIGLA_UE,
                                     DESCRICAO_CARGO == "PREFEITO", DESC_SIT_TOT_TURNO != "#NULO#") #primeiro turno, prefeito
 #Check
 stopifnot(length(unique(cand_2004v1$NUM_TITULO_ELEITORAL_CANDIDATO))==nrow(cand_2004v1))
@@ -637,10 +637,10 @@ for (i in 1:length(muns)){
 
 #only with places where results changed after elections
 vot_2004_supv1 <- vot_2004 %>% filter(!SIGLA_UE %in% e_round2$SIGLA_UE, SIGLA_UE %in% change$SIGLA_UE,
-                                      !SIGLA_UE %in% errors_tse,
+                                      !SIGLA_UE %in% errors_tse, !SIGLA_UE %in% errors_tse_type1$SIGLA_UE,
                                       DESCRICAO_CARGO == "PREFEITO")  #primeiro turno, prefeito
 cand_2004_supv1 <- cand_2004 %>% filter(!SIGLA_UE %in% e_round2$SIGLA_UE, SIGLA_UE %in% change$SIGLA_UE,
-                                        !SIGLA_UE %in% errors_tse,
+                                        !SIGLA_UE %in% errors_tse, !SIGLA_UE %in% errors_tse_type1$SIGLA_UE,
                                         DESCRICAO_CARGO == "PREFEITO", DESC_SIT_TOT_TURNO != "#NULO#") #primeiro turno, prefeito
 #Check
 stopifnot(length(unique(cand_2004_supv1$NUM_TITULO_ELEITORAL_CANDIDATO))==nrow(cand_2004_supv1))
@@ -729,6 +729,105 @@ for (i in 1:length(muns_sup)){
   print(i)
   
 } 
+
+######### Places with errors in candidate data 
+######### (candidate who replaces the candidate who resigned is not in the candidate database)
+
+#only with places where results changed after elections
+vot_2004_errv1 <- vot_2004 %>% filter(SIGLA_UE %in% errors_tse_type1$SIGLA_UE,
+                                      DESCRICAO_CARGO == "PREFEITO") 
+cand_2004_errv1 <- cand_2004 %>% filter(SIGLA_UE %in% errors_tse_type1$SIGLA_UE,
+                                        DESCRICAO_CARGO == "PREFEITO") 
+#Check
+stopifnot(length(unique(cand_2004_supv1$NUM_TITULO_ELEITORAL_CANDIDATO))==nrow(cand_2004_supv1))
+
+#Selecting candidatos aptos to aggregate votes per municipality 
+#(removing places that had a runoff vote from first rounds and removing eleicoes nao regulares)
+#Not using apto ou nao apto because that is not available
+#included UF to get unique ID
+vot_2004_supv2 <- vot_2004_supv1 %>% group_by(SIGLA_UE, SQ_CANDIDATO, SIGLA_UF) %>% 
+  summarize(VOTO_MUN_CAND = sum(TOTAL_VOTOS))
+#Check
+stopifnot(length(unique(vot_2004_supv2$SIGLA_UE))==length(unique(vot_2004_supv1$SIGLA_UE)))
+
+#Getting municipality's total vote and candidate vote share and renaming to merge
+vot_2004_supv3 <- vot_2004_supv2 %>% group_by(SIGLA_UE, SIGLA_UF) %>% summarize(VOTO_MUN_TOTAL = sum(VOTO_MUN_CAND)) %>% 
+  left_join(vot_2004_supv2, by = c("SIGLA_UE", "SIGLA_UF")) %>% 
+  mutate(VOTO_CAND_SHARE = VOTO_MUN_CAND/VOTO_MUN_TOTAL) %>% 
+  group_by(SIGLA_UE, SIGLA_UF) %>% mutate(NUMBER_CANDIDATES = n()) %>% 
+  rename(SEQUENCIAL_CANDIDATO = SQ_CANDIDATO)
+#Check
+stopifnot(vot_2004_supv3$VOTO_CAND_SHARE >= 0 & vot_2004_supv3$VOTO_CAND_SHARE <= 1)
+stopifnot(min(vot_2004_supv3$NUMBER_CANDIDATES)==1)
+
+#Merging with candidate information
+#Making sure there are no NAs and keys are unique
+nrow(cand_2004_supv1 %>% filter(is.na(SIGLA_UE)))==0
+nrow(vot_2004_supv3 %>% filter(is.na(SIGLA_UE)))==0
+nrow(cand_2004_supv1 %>% filter(is.na(SEQUENCIAL_CANDIDATO)))==0
+nrow(vot_2004_supv3 %>% filter(is.na(SEQUENCIAL_CANDIDATO)))==0
+nrow(cand_2004_supv1 %>% filter(is.na(SIGLA_UF)))==0
+nrow(vot_2004_supv3 %>% filter(is.na(SIGLA_UF)))==0
+#Creating unique ids (to check merge by three variables, two not enough), it's okay, they are unique #after checking once, no need to create it
+#vot_2004v3$id_merge <- paste0(vot_2004v3$SIGLA_UE, vot_2004v3$SEQUENCIAL_CANDIDATO, vot_2004v3$SIGLA_UF)
+#cand_2004v1$id_merge <- paste0(cand_2004v1$SIGLA_UE, cand_2004v1$SEQUENCIAL_CANDIDATO, cand_2004v1$SIGLA_UF)
+#nrow(vot_2004v3) == length(unique(vot_2004v3$id_merge))
+#row(cand_2004v1) == length(unique(cand_2004v1$id_merge))
+
+#Merging
+cand_2004_supv2 <- cand_2004_supv1 %>% left_join(vot_2004_supv3, by=c("SIGLA_UE", "SEQUENCIAL_CANDIDATO", "SIGLA_UF"))
+
+#Debugging #which do not merge?
+bugs <- anti_join(cand_2004_supv2, vot_2004_supv3, by=c("SIGLA_UE", "SEQUENCIAL_CANDIDATO", "SIGLA_UF"))
+summary(bugs$VOTO_CAND_SHARE) #all NA's
+#View(bugs %>% filter(DES_SITUACAO_CANDIDATURA=="DEFERIDO")) #situacao turno == Nao eleito (3), Why?
+table(bugs$DESC_SIT_TOT_TURNO)
+
+#Eliminating cases with NA vote share, eliminating places with only one candidate, and using age rule to break ties
+cand_2004_supv3 <- cand_2004_supv2 %>% filter(!is.na(VOTO_CAND_SHARE)) 
+
+cand_2004_supv4 <- cand_2004_supv3 %>% filter(NUMBER_CANDIDATES != 1) %>% group_by(SIGLA_UE, SIGLA_UF) %>% 
+  mutate(rankvote = rank(-VOTO_CAND_SHARE)) %>% 
+  mutate(rankvoter = ifelse(rankvote == 1.5 & DESC_SIT_TOT_TURNO == "ELEITO", 1,
+                            ifelse(rankvote == 1.5 & DESC_SIT_TOT_TURNO == "NÃO ELEITO", 2, rankvote)))
+cand_2004_supv5 <- cand_2004_supv4 %>% mutate(DESC_SIT_TOT_TURNO = ifelse(rankvote == 1 & 
+                                                                            DESC_SIT_TOT_TURNO == "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO", "ELEITO",
+                                                                          ifelse(rankvote == 2 & DESC_SIT_TOT_TURNO == "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO", 
+                                                                                 "NÃO ELEITO", DESC_SIT_TOT_TURNO)))
+table(cand_2004_supv5$DESC_SIT_TOT_TURNO, cand_2004_supv5$rankvoter) 
+
+####Vote margin (share and absolute)
+
+#getting winner and runnerups
+cand_2004_supv6 <- cand_2004_supv5 %>% filter(rankvoter== 1 | rankvoter== 2)
+table(cand_2004_supv6$DESC_SIT_TOT_TURNO) #half and half
+
+#Getting vote margins
+muns_sup <- unique(cand_2004_supv6$SIGLA_UE)
+#Check
+stopifnot(length(unique(muns_sup))==length(muns_sup))
+
+electionsf_sup_2004 <- NULL
+
+for (i in 1:length(muns_sup)){
+  
+  mun <- cand_2004_supv6[which(cand_2004_supv6$SIGLA_UE==muns_sup[i]), ]
+  
+  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
+  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
+  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
+  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
+  
+  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
+  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
+  
+  electionsf_sup_2004 <- bind_rows(electionsf_sup_2004, margin_winner, margin_runner)
+  print(i)
+  
+} 
+
+
+
 
 ######### Binding elections (regulares and nao regulares)
 electionsf_2004 <- electionsf_2004 %>% bind_cols(data_frame(TYPE_ELECTION = rep("regular", nrow(electionsf_2004))))  
