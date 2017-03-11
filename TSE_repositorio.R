@@ -838,7 +838,7 @@ table(cand_2004_errv8$DESC_SIT_TOT_TURNO) #should be half and half
 #Getting vote margins
 muns_err <- unique(cand_2004_errv8$SIGLA_UE)
 #Check
-stopifnot(length(unique(muns_sup))==length(muns_sup))
+stopifnot(length(unique(muns_err))==length(muns_err))
 
 electionsf_err_2004 <- NULL
 
