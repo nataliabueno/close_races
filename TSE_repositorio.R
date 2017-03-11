@@ -733,6 +733,8 @@ for (i in 1:length(muns_sup)){
 ######### Places with errors in candidate data 
 ######### (candidate who replaces the candidate who resigned is not in the candidate database)
 
+#Place with error (duplicated candidayte)
+
 #only with places where results changed after elections
 vot_2004_errv1 <- vot_2004 %>% filter(SIGLA_UE %in% errors_tse_type1$SIGLA_UE,
                                       DESCRICAO_CARGO == "PREFEITO") 
@@ -778,13 +780,22 @@ nrow(vot_2004_errv4 %>% filter(is.na(SIGLA_UF)))==0
 
 #Merging is different now because substitute candidates are not
 # in candidates database
-cand_vot_2004_err <- vot_2004_errv2 %>% filter(DESC_SIT_CANDIDATO != "DEFERIDO" & DESC_SIT_CANDIDATO != "SUB JUDICE") #getting data of candidates who are left out of candidates database
-cand_2004_errv2 <-  cand_2004_errv1 %>% filter(DESC_SIT_TOT_TURNO != "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO") #excluding canidates who are replaced
-cand_vot_2004_errv1 <- cand_vot_2004_err %>% select(ANO_ELEICAO, CODIGO_CARGO, DATA_GERACAO, DESCRICAO_CARGO, DESCRICAO_ELEICAO,
-                                                    HORA_GERACAO, NOME_CANDIDATO, NOME_COLIGACAO, 
+cand_vot_2004_err <- vot_2004_errv2 %>% filter(DESC_SIT_CANDIDATO != "DEFERIDO" & DESC_SIT_CANDIDATO != "SUB JUDICE" &
+                                               SIGLA_UE != 7234 & SIGLA_UE != 22250) #getting data of candidates who are left out of candidates database
+#Candidates who appear twice because of multiple zonas eleitorais (selecting once)
+cand_vot_2004_err_one <- vot_2004_errv2 %>% filter(SIGLA_UE == 7234 & DESC_SIT_CANDIDATO != "DEFERIDO" & DESC_SIT_CANDIDATO != "SUB JUDICE" & NUMERO_ZONA == 13)
+cand_vot_2004_err_two <- vot_2004_errv2 %>% filter(SIGLA_UE == 22250 & DESC_SIT_CANDIDATO != "DEFERIDO" & DESC_SIT_CANDIDATO != "SUB JUDICE" & NUMERO_ZONA == 35)
+
+cand_2004_errv2 <-  cand_2004_errv1 %>% filter(DESC_SIT_TOT_TURNO != "RENÚNCIA/FALECIMENTO COM SUBSTITUIÇÃO", 
+                                               DESC_SIT_TOT_TURNO != "#NULO#") #excluding canidates who are replaced
+
+cand_vot_2004_err0 <- bind_rows(cand_vot_2004_err, cand_vot_2004_err_one, cand_vot_2004_err_two)
+cand_vot_2004_errv1 <- cand_vot_2004_err0 %>% select(ANO_ELEICAO, CODIGO_CARGO, DATA_GERACAO, DESCRICAO_CARGO, DESCRICAO_ELEICAO,
+                                                    HORA_GERACAO, NOME_CANDIDATO, NOME_COLIGACAO, DESC_SIT_CAND_TOT,
                                                     NOME_PARTIDO, NOME_URNA_CANDIDATO, NUM_TURNO, NUMERO_CAND, NUMERO_PARTIDO,
                                                     SIGLA_PARTIDO, SQ_CANDIDATO,  SIGLA_UE, SIGLA_UF, SQ_CANDIDATO) %>% 
-                                                    rename(NUMERO_CANDIDATO = NUMERO_CAND, SEQUENCIAL_CANDIDATO = SQ_CANDIDATO)
+                                                    rename(NUMERO_CANDIDATO = NUMERO_CAND, SEQUENCIAL_CANDIDATO = SQ_CANDIDATO, 
+                                                           DESC_SIT_TOT_TURNO = DESC_SIT_CAND_TOT)
 #adding missing candidates to candidates database
 missing_cols <- c("DESCRICAO_UE", "CPF_CANDIDATO", "NOME_URNA_CANDIDATO", "COD_SITUACAO_CANDIDATURA", "DES_SITUACAO_CANDIDATURA",
  "CODIGO_LEGENDA", "SIGLA_LEGENDA",  "COMPOSICAO_LEGENDA",              
@@ -792,9 +803,9 @@ missing_cols <- c("DESCRICAO_UE", "CPF_CANDIDATO", "NOME_URNA_CANDIDATO", "COD_S
  "IDADE_DATA_ELEICAO", "CODIGO_SEXO", "DESCRICAO_SEXO", "COD_GRAU_INSTRUCAO",         
  "DESCRICAO_GRAU_INSTRUCAO", "CODIGO_ESTADO_CIVIL", "DESCRICAO_ESTADO_CIVIL", "CODIGO_NACIONALIDADE",          
  "DESCRICAO_NACIONALIDADE", "SIGLA_UF_NASCIMENTO", "CODIGO_MUNICIPIO_NASCIMENTO", "NOME_MUNICIPIO_NASCIMENTO",    
- "DESPESA_MAX_CAMPANHA", "COD_SIT_TOT_TURNO", "DESC_SIT_TOT_TURNO")
+ "DESPESA_MAX_CAMPANHA", "COD_SIT_TOT_TURNO")
 
-missing <- matrix(NA, 90, length(missing_cols))
+missing <- matrix(NA, 88, length(missing_cols))
 colnames(missing) <- missing_cols
 missing <- as_tibble(missing)
 
@@ -807,22 +818,22 @@ cand_2004_errv5 <- cand_2004_errv4 %>% left_join(vot_2004_errv4, by=c("SIGLA_UE"
 
 #Okay to remove NAs in VOTO_MUN_TOTAL because these candidates did not run
 cand_2004_errv6 <- cand_2004_errv5 %>% filter(!is.na(VOTO_MUN_CAND))
-#Debugging #which do not merge?
-bugs <- anti_join(cand_2004_errv4, vot_2004_errv4, by=c("SIGLA_UE", "SEQUENCIAL_CANDIDATO", "SIGLA_UF"))
-#View(bugs %>% filter(DES_SITUACAO_CANDIDATURA=="DEFERIDO")) #situacao turno == Nao eleito (3), Why?
-table(bugs$DESC_SIT_TOT_TURNO)
 
+
+#Breaking ties in election using candidate age
 cand_2004_errv7 <- cand_2004_errv6 %>% group_by(SIGLA_UE, SIGLA_UF) %>% 
   mutate(rankvote = rank(-VOTO_CAND_SHARE)) %>% 
   mutate(rankvoter = ifelse(rankvote == 1.5 & DESC_SIT_TOT_TURNO == "ELEITO", 1,
                             ifelse(rankvote == 1.5 & DESC_SIT_TOT_TURNO == "NÃO ELEITO", 2, rankvote)))
-table(cand_2004_errv7$DESC_SIT_TOT_TURNO, cand_2004_errv7$rankvoter) #why not equal eleito and nao eleito? #Begin here
+
+
+table(cand_2004_errv7$DESC_SIT_TOT_TURNO, cand_2004_errv7$rankvoter) #half and half
 
 ####Vote margin (share and absolute)
 
 #getting winner and runnerups
 cand_2004_errv8 <- cand_2004_errv7 %>% filter(rankvoter== 1 | rankvoter== 2)
-table(cand_2004_errv8$DESC_SIT_TOT_TURNO) #why not equal eleito and nao eleito? #Begin here # should be half and half
+table(cand_2004_errv8$DESC_SIT_TOT_TURNO) #should be half and half
 
 #Getting vote margins
 muns_err <- unique(cand_2004_errv8$SIGLA_UE)
