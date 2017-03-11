@@ -170,7 +170,7 @@ save(vot_2000_2016, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_
 #2. Cleaning and getting it ready for analyse 
 # The main goal here is getting vote margin
 #2.1 Elections 2000 -----> OK
-#2.2 Elections 2004 -----> FIX 
+#2.2 Elections 2004 -----> OK
 #2.3 Elections 2008 -----> OK
 #2.4 Elections 2012 -----> OK
 ###################################################################
@@ -1420,6 +1420,7 @@ electionsff_2008 <- electionsff_2008 %>% mutate(NUM_TITULO_ELEITORAL_CANDIDATO =
 electionsff_2012 <- electionsff_2012 %>% mutate(NUM_TITULO_ELEITORAL_CANDIDATO = as.character(NUM_TITULO_ELEITORAL_CANDIDATO),
                                                 CPF_CANDIDATO = as.character(CPF_CANDIDATO))
 electionsff <- bind_rows(electionsff_2000, electionsff_2004, electionsff_2008, electionsff_2012)
+
 save(electionsff, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000_2012.Rda")
 
 Number_Mun <- electionsff %>% group_by(ANO_ELEICAO) %>% 
