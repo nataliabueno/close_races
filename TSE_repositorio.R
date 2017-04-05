@@ -18,10 +18,43 @@ par(mfrow=c(1,1))
 library(tidyverse)
 library(eeptools)
 
+#Change your working directory here
+dir <- "~/Dropbox/LOCAL_ELECTIONS/"
+
+#helper functions
+source(paste0(dir, "codes/helper_functions.R"))
+
+
 ###################################################################
-#0. Downloading #TO DO
+#0. Downloading 
 ###################################################################
 
+#Candidate data
+url_cand00 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2000.zip"
+cand_2000 <- get_tse(url_cand00)
+
+url_cand04 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2004.zip"
+cand_2004 <- get_tse(url_cand04)
+
+url_cand08 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2008.zip"
+cand_2008 <- get_tse(url_cand08)
+
+url_cand12 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2012.zip"
+cand_2012 <- get_tse(url_cand12)
+
+
+#Voting data #to do
+url_cand00 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2000.zip"
+cand_2000 <- get_tse(url_cand00)
+
+url_cand04 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2004.zip"
+cand_2004 <- get_tse(url_cand04)
+
+url_cand08 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2008.zip"
+cand_2008 <- get_tse(url_cand08)
+
+url_cand12 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2012.zip"
+cand_2012 <- get_tse(url_cand12)
 
 ###################################################################
 #1. Combining

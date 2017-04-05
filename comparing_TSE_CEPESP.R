@@ -1,3 +1,7 @@
+#Goal is to compare number of municipalities, total number of votes per municipality and 
+# candidate's vote share in each municipality
+
+
 #Preambule
 #R Version 3.3.2
 rm(list=ls())
@@ -22,15 +26,32 @@ Number_Mun <- electionstse %>% group_by(ANO_ELEICAO) %>%
 table(electionstse$DESC_SIT_TOT_TURNO)
 Number_Mun
 
-electionst0 <- electionstse %>% select(ANO_ELEICAO, NUM_TURNO, NOME_CANDIDATO, 
-												  SIGLA_UE, DESC_SIT_TOT_TURNO, SIGLA_UF, 
-												  VOTO_MUN_CAND, VOTO_MUN_TOTAL,VOTO_CAND_SHARE,
-												  vote_margin_share,
-												  vote_margin_abs, SIGLA_PARTIDO) %>% 
-												  filter(SIGLA_PARTIDO == "PT")
-summary(electionst0)
-dim(electionst0)
-rm(electionsff)
+##### Getting CEPESP data
+
+br <- locale("es", encoding = "latin1") 
+round1 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/original_data/2000-2004-2008-2012-2016_Prefeito_Municipio_Candidato_1turno.csv",
+                   col_types = cols(.default = col_character(), voto_total= col_number()), locale=br)
+  
+round2 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/original_data/2000-2004-2008-2012-2016_Prefeito_Municipio_Candidato_2turno.csv",
+                   col_types = cols(.default = col_character(), voto_total= col_number()), locale=br) 
+
+#Excluding 2016 at the moment
+round1 <- round1 %>% filter(anoEleicao != 2016)
+round2 <- round2 %>% filter(anoEleicao != 2016)
+
+#creating municipality election year key and removing brancos/nulos
+round1 <- round1 %>% mutate(mun_electionyear = paste0(SG_UE, anoEleicao)) %>% filter(cargo_cod!=0)
+round2 <- round2 %>% mutate(mun_electionyear = paste0(SG_UE, anoEleicao)) %>% filter(cargo_cod!=0)
+
+#Excluding places with runoff from first round 
+#because I am interested in vote margin in the decisive round
+
+e_round2 <- round1 %>% filter(resultado_des == "2º TURNO") %>% distinct(mun_electionyear)
+round1v1 <- round1 %>% filter(!mun_electionyear %in% e_round2$mun_electionyear) 
+
+#Binding municipalities with only decisive round
+roundf <- bind_rows(round1v1, round2)  
+
 
 #### Loading CEPESP
 load("~/Dropbox/Bypassing_CPS/Bueno_CPS_2017/replication/raw_data/electionsffR&R.Rda")
@@ -90,21 +111,27 @@ tempc <- electionsffcepesp %>% filter(SG_UE == "68330", anoEleicao == 2012)
 tempt <- electionstse %>% filter(SIGLA_UE == "58300", ANO_ELEICAO == 2008) 
 tempc <- electionsffcepesp %>% filter(SG_UE == "58300", anoEleicao == 2008) 
 
-######## Comparing LN data and Bueno TSE data
+#### FROM COMPARING NB and LN
+#Summary stats
+summary(prefeitos_a2$V3)
+summary(electionstse2$vote_margin_share)
+prefeitos_a2 <- arrange(prefeitos_a2, yearid)
+electionstse2 <- arrange(electionstse2, yearid)
+table(prefeitos_a2$V3==electionstse2$vote_margin_share)
 
-#### Loading LN
-load("~/Dropbox/LOCAL_ELECTIONS/LN_data/prefeitos_margin_a.Rda")
-load("~/Dropbox/LOCAL_ELECTIONS/LN_data/prefeitos_margin_b.Rda")
+#Merge data
+electionstse3 <- electionstse2 %>% select(yearid, SIGLA_UE, ANO_ELEICAO, 
+                                          vote_margin_share, VOTO_MUN_TOTAL, SIGLA_UF, DESCRICAO_UE)
 
-#Comparing number of muncipalities
-head(prefeitos_a)
-table(prefeitos_a$year)
+both <- electionstse3 %>% left_join(prefeitos_a2, by = "yearid")
+all.equal(both$V3, both$vote_margin_share)
+elementwise.all.equal <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
+table(elementwise.all.equal(both$V3, both$vote_margin_share))
+diffs <- both[!elementwise.all.equal(both$V3, both$vote_margin_share),]
+diffs_total <- both[!elementwise.all.equal(both$totalVotesMun, both$VOTO_MUN_TOTAL),]
 
-prefeitos_a <- as_tibble(prefeitos_a)
-prefeitos_a <- prefeitos_a %>% filter(year != 2016)
-
-
-#Comparing vote margin in places that are in both datasets
-
+table(diffs$ANO_ELEICAO)
+dim(diffs)
+dim(diffs_total)
 
 
