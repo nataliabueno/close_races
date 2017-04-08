@@ -5,7 +5,7 @@ library(purrr)
 
 dir_d <- "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2000.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2000v2/")
 
 get_tse <- function(url_repo, file_d, file_un){
   
