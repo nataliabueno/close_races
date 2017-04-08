@@ -81,7 +81,7 @@ url_vot16 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidat
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2016.zip")
 file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2016/")
 vot_2016 <- get_tse(url_cand16, file_d, file_un)
- d
+
 ###################################################################
 #1. Combining
 # Reading candidate data
@@ -124,7 +124,7 @@ names(cand_2004) <- labels_pre2012
 cand_2004 <- as_tibble(cand_2004)
 
 #candidates 2008
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2008/consulta_cand_2008_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2008/consulta_cand_2008_", ufs, ".txt"))
 cand_2008 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2008 <- do.call("rbind", cand_2008)
