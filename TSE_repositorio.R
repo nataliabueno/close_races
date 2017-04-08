@@ -24,7 +24,6 @@ dir <- "~/Dropbox/LOCAL_ELECTIONS/"
 #helper functions
 source(paste0(dir, "codes/helper_functions.R"))
 
-
 ###################################################################
 #0. Downloading 
 ###################################################################
