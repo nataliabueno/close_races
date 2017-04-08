@@ -28,32 +28,36 @@ source(paste0(dir, "codes/helper_functions.R"))
 #0. Downloading 
 ###################################################################
 
+dir_d <- "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/"
+
 #Candidate data
 url_cand00 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2000.zip"
-cand_2000 <- get_tse(url_cand00)
+file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2000.zip")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2000/")
+cand_2000 <- get_tse(url_cand00, file_d, file_un)
 
 url_cand04 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2004.zip"
-cand_2004 <- get_tse(url_cand04)
+file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2004.zip")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2004/")
+cand_2004 <- get_tse(url_cand04, file_d, file_un)
 
 url_cand08 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2008.zip"
-cand_2008 <- get_tse(url_cand08)
+file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2008.zip")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2008/")
+cand_2008 <- get_tse(url_cand04, file_d, file_un)
 
 url_cand12 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2012.zip"
-cand_2012 <- get_tse(url_cand12)
+file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2012.zip")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2012/")
+cand_2012 <- get_tse(url_cand12, file_d, file_un)
 
+url_cand16 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2016.zip"
+file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2016.zip")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2016/")
+cand_2016 <- get_tse(url_cand16, file_d, file_un)
 
-#Voting data #to do
-url_cand00 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2000.zip"
-cand_2000 <- get_tse(url_cand00)
+#Voting data
 
-url_cand04 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2004.zip"
-cand_2004 <- get_tse(url_cand04)
-
-url_cand08 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2008.zip"
-cand_2008 <- get_tse(url_cand08)
-
-url_cand12 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2012.zip"
-cand_2012 <- get_tse(url_cand12)
 
 ###################################################################
 #1. Combining
@@ -118,7 +122,7 @@ labels_2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DE
                    "NOME_MUNICIPIO_NASCIMENTO", "DESPESA_MAX_CAMPANHA", "COD_SIT_TOT_TURNO",
                    "DESC_SIT_TOT_TURNO", "EMAIL_CANDIDATO")
 
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2012/consulta_cand_2012_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2012/consulta_cand_2012_", ufs, ".txt"))
 cand_2012 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2012 <- do.call("rbind", cand_2012)
@@ -215,6 +219,7 @@ save(vot_2000_2016, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_
 #2.2 Elections 2004 -----> OK
 #2.3 Elections 2008 -----> OK
 #2.4 Elections 2012 -----> OK
+#2.5 Elections 2016 -----> TO DO
 ###################################################################
 
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2000_2016.RData")
