@@ -44,7 +44,7 @@ cand_2004 <- get_tse(url_cand04, file_d, file_un)
 url_cand08 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2008.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2008.zip")
 file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2008/")
-cand_2008 <- get_tse(url_cand04, file_d, file_un)
+cand_2008 <- get_tse(url_cand08, file_d, file_un)
 
 url_cand12 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2012.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2012.zip")
@@ -57,8 +57,31 @@ file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2016/")
 cand_2016 <- get_tse(url_cand16, file_d, file_un)
 
 #Voting data
+url_vot00 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2000.zip"
+file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2000.zip")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2000/")
+vot_2000 <- get_tse(url_vot00, file_d, file_un)
 
+url_vot04 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2004.zip"
+file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2004.zip")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2004/")
+vot_2004 <- get_tse(url_vot04, file_d, file_un)
 
+url_vot08 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2008.zip"
+file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2008.zip")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2008/")
+vot_2008 <- get_tse(url_vot08, file_d, file_un)
+
+url_vot12 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2012.zip"
+file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2012.zip")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2012/")
+vot_2012 <- get_tse(url_vot12, file_d, file_un)
+
+url_vot16 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2016.zip"
+file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2016.zip")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2016/")
+vot_2016 <- get_tse(url_cand16, file_d, file_un)
+ d
 ###################################################################
 #1. Combining
 # Reading candidate data
