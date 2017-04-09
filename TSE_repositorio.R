@@ -1,6 +1,6 @@
 ###################################################################
 ############# Downloading, Organizing and Cleaning Electoral Data
-#0. Download TSE repositorio data #TO DO
+#0. Download TSE repositorio data
 #1. Combine and merge
 #2. Clean and get it ready for use
 ###################################################################
