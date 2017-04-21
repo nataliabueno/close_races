@@ -17,18 +17,19 @@ par(mfrow=c(1,1))
 #libraries used
 library(tidyverse)
 library(eeptools)
+library(data.table)
 
 #Change your working directory here
-dir <- "~/Dropbox/LOCAL_ELECTIONS/"
+dir <- "~/Dropbox/Data/close_elections/"
 
 #helper functions
-source(paste0(dir, "codes/helper_functions.R"))
+source(paste0(dir, "helper_functions.R"))
 
 ###################################################################
 #0. Downloading 
 ###################################################################
 
-dir_d <- "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/"
+dir_d <- "repositorio_data/"
 
 #Candidate data
 url_cand00 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2000.zip"
@@ -58,28 +59,28 @@ cand_2016 <- get_tse(url_cand16, file_d, file_un)
 
 #Voting data
 url_vot00 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2000.zip"
-file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2000.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2000/")
+file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2000.zip")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2000/")
 vot_2000 <- get_tse(url_vot00, file_d, file_un)
 
 url_vot04 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2004.zip"
-file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2004.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2004/")
+file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2004.zip")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2004/")
 vot_2004 <- get_tse(url_vot04, file_d, file_un)
 
 url_vot08 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2008.zip"
-file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2008.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2008/")
+file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2008.zip")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2008/")
 vot_2008 <- get_tse(url_vot08, file_d, file_un)
 
 url_vot12 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2012.zip"
-file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2012.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2012/")
+file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2012.zip")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2012/")
 vot_2012 <- get_tse(url_vot12, file_d, file_un)
 
-url_vot16 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2016.zip"
-file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2016.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2016/")
+url_vot16 <- "`http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2016.zip"
+file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2016.zip")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2016/")
 vot_2016 <- get_tse(url_cand16, file_d, file_un)
 
 ###################################################################
@@ -107,8 +108,10 @@ labels_pre2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", 
                     "NOME_MUNICIPIO_NASCIMENTO", "DESPESA_MAX_CAMPANHA", "COD_SIT_TOT_TURNO",
                     "DESC_SIT_TOT_TURNO")
 
+setwd(dir)
+
 #candidates 2000
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2000/consulta_cand_2000_",ufs, ".txt"))
+files <- as.list(paste0("./repositorio_data/original_unzipped/consulta_cand/consulta_cand_2000/consulta_cand_2000_",ufs, ".txt"))
 cand_2000 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2000 <- do.call("rbind", cand_2000)
@@ -116,7 +119,7 @@ names(cand_2000) <- labels_pre2012
 cand_2000 <- as_tibble(cand_2000)
 
 #candidates 2004
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2004/consulta_cand_2004_",ufs, ".txt"))
+files <- as.list(paste0("./repositorio_data/original_unzipped/consulta_cand/consulta_cand_2004/consulta_cand_2004_",ufs, ".txt"))
 cand_2004 <- lapply(files, read.table, sep = ";", header=F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2004 <- do.call("rbind", cand_2004)
@@ -124,7 +127,7 @@ names(cand_2004) <- labels_pre2012
 cand_2004 <- as_tibble(cand_2004)
 
 #candidates 2008
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2008/consulta_cand_2008_", ufs, ".txt"))
+files <- as.list(paste0("./repositorio_data/original_unzipped/consulta_cand/consulta_cand_2008/consulta_cand_2008_", ufs, ".txt"))
 cand_2008 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2008 <- do.call("rbind", cand_2008)
@@ -145,7 +148,7 @@ labels_2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DE
                    "NOME_MUNICIPIO_NASCIMENTO", "DESPESA_MAX_CAMPANHA", "COD_SIT_TOT_TURNO",
                    "DESC_SIT_TOT_TURNO", "EMAIL_CANDIDATO")
 
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2012/consulta_cand_2012_", ufs, ".txt"))
+files <- as.list(paste0("./repositorio_data/original_unzipped/consulta_cand/consulta_cand_2012/consulta_cand_2012_", ufs, ".txt"))
 cand_2012 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2012 <- do.call("rbind", cand_2012)
@@ -166,7 +169,7 @@ labels_2016 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DE
                   "CODIGO_MUNICIPIO_NASCIMENTO", "NOME_MUNICIPIO_NASCIMENTO", "DESPESA_MAX_CAMPANHA",
                   "COD_SIT_TOT_TURNO", "DESC_SIT_TOT_TURNO", "EMAIL_CANDIDATO")
 
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2016/consulta_cand_2016_",ufs, ".txt"))
+files <- as.list(paste0("./repositorio_data/original_unzipped/consulta_cand/consulta_cand_2016/consulta_cand_2016_",ufs, ".txt"))
 cand_2016 <- lapply(files, read.table, sep = ";", 
                     header = F, stringsAsFactors = F, fill = T, fileEncoding = "latin1") 
 cand_2016 <- do.call("rbind", cand_2016)
@@ -174,7 +177,7 @@ names(cand_2016) <- labels_2016
 cand_2016 <- as_tibble(cand_2016)
 
 cand_2000_2016 <- list(cand_2000, cand_2004, cand_2008, cand_2012, cand_2016)
-save(cand_2000_2016, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2000_2016.RData")
+save(cand_2000_2016, file = "repositorio_data/original_unzipped/cand_2000_2016.RData")
 
 #Voting data 2000
 labels_pre2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DESCRICAO_ELEICAO",
@@ -185,7 +188,7 @@ labels_pre2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", 
                   "SIGLA_PARTIDO", "NOME_PARTIDO", "SEQUENCIAL_LEGENDA", "NOME_COLIGACAO", "COMPOSICAO_LEGENDA",
                   "TOTAL_VOTOS")
 
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2000/votacao_candidato_munzona_2000_",ufs, ".txt"))
+files <- as.list(paste0("./repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2000/votacao_candidato_munzona_2000_",ufs, ".txt"))
 vot_2000 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 vot_2000 <- do.call("rbind", vot_2000)
@@ -193,7 +196,7 @@ names(vot_2000) <- labels_pre2012
 vot_2000 <- as_tibble(vot_2000)
 
 #Voting data 2004
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2004/votacao_candidato_munzona_2004_",ufs, ".txt"))
+files <- as.list(paste0("repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2004/votacao_candidato_munzona_2004_",ufs, ".txt"))
 vot_2004 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 vot_2004 <- do.call("rbind", vot_2004)
@@ -201,7 +204,7 @@ names(vot_2004) <- labels_pre2012
 vot_2004 <- as_tibble(vot_2004)
 
 #Voting data 2008
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2008/votacao_candidato_munzona_2008_",ufs, ".txt"))
+files <- as.list(paste0("repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2008/votacao_candidato_munzona_2008_",ufs, ".txt"))
 vot_2008 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors=F, fill = T, fileEncoding = "windows-1252") 
 vot_2008 <- do.call("rbind", vot_2008)
@@ -209,7 +212,7 @@ names(vot_2008) <- labels_pre2012
 vot_2008 <- as_tibble(vot_2008)
 
 #voting data 2012
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2012/votacao_candidato_munzona_2012_",ufs, ".txt"))
+files <- as.list(paste0("repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2012/votacao_candidato_munzona_2012_",ufs, ".txt"))
 vot_2012 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 vot_2012 <- do.call("rbind", vot_2012)
@@ -225,7 +228,7 @@ labels_2016 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DE
                   "TOTAL_VOTOS", "TRANSITO")
 
 #voting data 2016
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2016/votacao_candidato_munzona_2016_",ufs, ".txt"))
+files <- as.list(paste0("repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2016/votacao_candidato_munzona_2016_",ufs, ".txt"))
 vot_2016 <- lapply(files, read.table, sep=";", 
                    header=F, stringsAsFactors=F, fill = T, fileEncoding = "latin1") 
 vot_2016 <- do.call("rbind", vot_2016)
@@ -233,10 +236,10 @@ names(vot_2016) <- labels_2016
 vot_2016 <- as_tibble(vot_2016)
 
 vot_2000_2016 <- list(vot_2000, vot_2004, vot_2008, vot_2012, vot_2016)
-save(vot_2000_2016, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2000_2016.RData")
+save(vot_2000_2016, file = "repositorio_data/original_unzipped/vot_2000_2016.RData")
 
 ###################################################################
-#2. Cleaning and getting it ready for analyse 
+#2. Cleaning and getting it ready for analyze 
 # The main goal here is getting vote margin
 #2.1 Elections 2000 -----> OK
 #2.2 Elections 2004 -----> OK
@@ -245,8 +248,8 @@ save(vot_2000_2016, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_
 #2.5 Elections 2016 -----> TO DO
 ###################################################################
 
-load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2000_2016.RData")
-load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2000_2016.RData")
+load("repositorio_data/original_unzipped/vot_2000_2016.RData")
+load("repositorio_data/original_unzipped/cand_2000_2016.RData")
 
 #######Elections 2000
 vot_2000 <- vot_2000_2016[[1]]
@@ -397,32 +400,21 @@ cand_2000v5 <- bind_rows(cand_2000v4, cand_2000_runoffv3)
 ####Vote margin (share and absolute)
 
 #getting winner and runnerups
-cand_2000v6 <- cand_2000v5 %>% filter(rankvoter== 1 | rankvoter== 2)
-table(cand_2000v6$DESC_SIT_TOT_TURNO)
+
+electionsf_2000 <- data.table(cand_2000v5)
+electionsf_2000 = electionsf_2000[rankvoter <=2]
+table(electionsf_2000$DESC_SIT_TOT_TURNO)
 
 #Getting vote margins
-muns <- unique(cand_2000v6$SIGLA_UE)
+muns <- unique(electionsf_2000$SIGLA_UE)
 #Check
 stopifnot(length(unique(muns))==length(muns))
 
-electionsf_2000 <- NULL
-
-for (i in 1:length(muns)){
-  
-  mun <- cand_2000v6[which(cand_2000v6$SIGLA_UE==muns[i]), ]
-  
-  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
-  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
-  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
-  
-  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
-  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
-  
-  electionsf_2000 <- bind_rows(electionsf_2000, margin_winner, margin_runner)
-  print(i)
-  
-} 
+electionsf_2000[, lostMark := VOTO_MUN_CAND[rankvoter == 2], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_2000[, winMark := VOTO_MUN_CAND[rankvoter == 1], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_2000[rankvoter == 1, marginAbs := VOTO_MUN_CAND-lostMark]
+electionsf_2000[rankvoter == 2, marginAbs := VOTO_MUN_CAND-winMark]
+electionsf_2000[, margin := marginAbs / VOTO_MUN_TOTAL]
 
 #######Calculating vote share for eleicoes nao-regulares
 
@@ -496,32 +488,20 @@ table(cand_2000_supv4$DESC_SIT_TOT_TURNO, cand_2000_supv4$rankvoter)
 ####Vote margin (share and absolute)
 
 #getting winner and runnerups
-cand_2000_supv5 <- cand_2000_supv4 %>% filter(rankvoter== 1 | rankvoter== 2)
-table(cand_2000_supv5$DESC_SIT_TOT_TURNO) #half and half
+electionsf_sup_2000 <- data.table(cand_2000_supv4)
+electionsf_sup_2000 = electionsf_sup_2000[rankvoter <= 2]
+table(electionsf_sup_2000$DESC_SIT_TOT_TURNO) #half and half
 
 #Getting vote margins
-muns_sup <- unique(cand_2000_supv5$SIGLA_UE)
+muns_sup <- unique(electionsf_sup_2000$SIGLA_UE)
 #Check
 stopifnot(length(unique(muns_sup))==length(muns_sup))
 
-electionsf_sup_2000 <- NULL
-
-for (i in 1:length(muns_sup)){
-  
-  mun <- cand_2000_supv5[which(cand_2000_supv5$SIGLA_UE==muns_sup[i]), ]
-  
-  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
-  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
-  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
-  
-  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
-  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
-  
-  electionsf_sup_2000 <- bind_rows(electionsf_sup_2000, margin_winner, margin_runner)
-  print(i)
-  
-} 
+electionsf_sup_2000[, lostMark := VOTO_MUN_CAND[rankvoter == 2], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_sup_2000[, winMark := VOTO_MUN_CAND[rankvoter == 1], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_sup_2000[rankvoter == 1, marginAbs := VOTO_MUN_CAND-lostMark]
+electionsf_sup_2000[rankvoter == 2, marginAbs := VOTO_MUN_CAND-winMark]
+electionsf_sup_2000[, margin := marginAbs / VOTO_MUN_TOTAL]
 
 ######### Binding elections (regulares and nao regulares)
 electionsf_2000 <- electionsf_2000 %>% bind_cols(data_frame(TYPE_ELECTION = rep("regular", nrow(electionsf_2000))))  
@@ -675,33 +655,21 @@ cand_2004v5 <- bind_rows(cand_2004v4, cand_2004_runoffv3)
 
 ####Vote margin (share and absolute)
 
-#getting winner and runnerups
-cand_2004v6 <- cand_2004v5 %>% filter(rankvoter== 1 | rankvoter== 2)
-table(cand_2004v6$DESC_SIT_TOT_TURNO)
+electionsf_2004 <- data.table(cand_2004v5)
+electionsf_2004 = electionsf_2004[rankvoter <=2]
+table(electionsf_2004$DESC_SIT_TOT_TURNO)
 
 #Getting vote margins
-muns <- unique(cand_2004v6$SIGLA_UE)
+muns <- unique(electionsf_2004$SIGLA_UE)
 #Check
 stopifnot(length(unique(muns))==length(muns))
 
-electionsf_2004 <- NULL
+electionsf_2004[, lostMark := VOTO_MUN_CAND[rankvoter == 2], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_2004[, winMark := VOTO_MUN_CAND[rankvoter == 1], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_2004[rankvoter == 1, marginAbs := VOTO_MUN_CAND-lostMark]
+electionsf_2004[rankvoter == 2, marginAbs := VOTO_MUN_CAND-winMark]
+electionsf_2004[, margin := marginAbs / VOTO_MUN_TOTAL]
 
-for (i in 1:length(muns)){
-  
-  mun <- cand_2004v6[which(cand_2004v6$SIGLA_UE==muns[i]), ]
-  
-  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
-  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
-  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
-  
-  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
-  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
-  
-  electionsf_2004 <- bind_rows(electionsf_2004, margin_winner, margin_runner)
-  print(i)
-  
-} 
 
 #######Calculating vote share for eleicoes nao-regulares 
 
@@ -773,32 +741,21 @@ table(cand_2004_supv5$DESC_SIT_TOT_TURNO, cand_2004_supv5$rankvoter)
 ####Vote margin (share and absolute)
 
 #getting winner and runnerups
-cand_2004_supv6 <- cand_2004_supv5 %>% filter(rankvoter== 1 | rankvoter== 2)
-table(cand_2004_supv6$DESC_SIT_TOT_TURNO) #half and half
+electionsf_sup_2004 <- data.table(cand_2004_supv4)
+electionsf_sup_2004 = electionsf_sup_2004[rankvoter <= 2]
+table(electionsf_sup_2004$DESC_SIT_TOT_TURNO) #half and half
 
 #Getting vote margins
-muns_sup <- unique(cand_2004_supv6$SIGLA_UE)
+muns_sup <- unique(electionsf_sup_2004$SIGLA_UE)
 #Check
 stopifnot(length(unique(muns_sup))==length(muns_sup))
 
-electionsf_sup_2004 <- NULL
+electionsf_sup_2004[, lostMark := VOTO_MUN_CAND[rankvoter == 2], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_sup_2004[, winMark := VOTO_MUN_CAND[rankvoter == 1], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_sup_2004[rankvoter == 1, marginAbs := VOTO_MUN_CAND-lostMark]
+electionsf_sup_2004[rankvoter == 2, marginAbs := VOTO_MUN_CAND-winMark]
+electionsf_sup_2004[, margin := marginAbs / VOTO_MUN_TOTAL]
 
-for (i in 1:length(muns_sup)){
-  
-  mun <- cand_2004_supv6[which(cand_2004_supv6$SIGLA_UE==muns_sup[i]), ]
-  
-  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
-  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
-  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
-  
-  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
-  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
-  
-  electionsf_sup_2004 <- bind_rows(electionsf_sup_2004, margin_winner, margin_runner)
-  print(i)
-  
-} 
 
 ######### Places with errors in candidate data 
 ######### (candidate who replaces the candidate who resigned is not in the candidate database)
@@ -902,32 +859,21 @@ table(cand_2004_errv7$DESC_SIT_TOT_TURNO, cand_2004_errv7$rankvoter) #half and h
 ####Vote margin (share and absolute)
 
 #getting winner and runnerups
-cand_2004_errv8 <- cand_2004_errv7 %>% filter(rankvoter== 1 | rankvoter== 2)
-table(cand_2004_errv8$DESC_SIT_TOT_TURNO) #should be half and half
+
+electionsf_err_2004 <- data.table(cand_2004_supv4)
+electionsf_err_2004 = electionsf_err_2004[rankvoter <= 2]
+table(electionsf_err_2004$DESC_SIT_TOT_TURNO) #half and half
 
 #Getting vote margins
-muns_err <- unique(cand_2004_errv8$SIGLA_UE)
+muns_sup <- unique(electionsf_err_2004$SIGLA_UE)
 #Check
-stopifnot(length(unique(muns_err))==length(muns_err))
+stopifnot(length(unique(muns_sup))==length(muns_sup))
 
-electionsf_err_2004 <- NULL
-
-for (i in 1:length(muns_err)){
-  
-  mun <- cand_2004_errv8[which(cand_2004_errv8$SIGLA_UE==muns_err[i]), ]
-  
-  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
-  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
-  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
-  
-  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
-  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
-  
-  electionsf_err_2004 <- bind_rows(electionsf_err_2004, margin_winner, margin_runner)
-  print(i)
-  
-} 
+electionsf_err_2004[, lostMark := VOTO_MUN_CAND[rankvoter == 2], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_err_2004[, winMark := VOTO_MUN_CAND[rankvoter == 1], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_err_2004[rankvoter == 1, marginAbs := VOTO_MUN_CAND-lostMark]
+electionsf_err_2004[rankvoter == 2, marginAbs := VOTO_MUN_CAND-winMark]
+electionsf_err_2004[, margin := marginAbs / VOTO_MUN_TOTAL]
 
 ######### Binding elections (regulares and nao regulares)
 electionsf_2004 <- electionsf_2004 %>% bind_cols(data_frame(TYPE_ELECTION = rep("regular", nrow(electionsf_2004))))  
@@ -1064,35 +1010,30 @@ cand_2008v5 <- bind_rows(cand_2008v4, cand_2008_runoffv3)
 #getting winner and runnerups
 cand_2008v6 <- cand_2008v5 %>% filter(rankvoter== 1 | rankvoter== 2)
 table(cand_2008v6$DESC_SIT_TOT_TURNO) #not half and half...why?
+
 #Municipality with winner and no runnerup
 temp <- cand_2008v6 %>% group_by(SIGLA_UE) %>% mutate(count = n())
 table(temp$count)
 temp <- temp %>% filter(count == 1)
 problem <-cand_2008 %>% filter(SIGLA_UE == temp$SIGLA_UE)#remove, but why did this sty in data?
 #removing from data (initial data had 1 prefeito and two vice-prefeitos)
+
 cand_2008v6 <- cand_2008v6 %>% filter(SIGLA_UE != temp$SIGLA_UE)
 
+electionsf_2008 <- data.table(cand_2008v6)
+electionsf_2008 = electionsf_2008[rankvoter <=2]
+table(electionsf_2008$DESC_SIT_TOT_TURNO)
+
 #Getting vote margins
-muns <- unique(cand_2008v6$SIGLA_UE)
+muns <- unique(electionsf_2008$SIGLA_UE)
+#Check
+stopifnot(length(unique(muns))==length(muns))
 
-electionsf_2008 <- NULL
-
-for (i in 1:length(muns)){
-  
-  mun <- cand_2008v6[which(cand_2008v6$SIGLA_UE==muns[i]), ]
-  
-  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
-  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
-  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
-  
-  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
-  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
-  
-  electionsf_2008 <- bind_rows(electionsf_2008, margin_winner, margin_runner)
-  print(i)
-  
-} 
+electionsf_2008[, lostMark := VOTO_MUN_CAND[rankvoter == 2], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_2008[, winMark := VOTO_MUN_CAND[rankvoter == 1], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_2008[rankvoter == 1, marginAbs := VOTO_MUN_CAND-lostMark]
+electionsf_2008[rankvoter == 2, marginAbs := VOTO_MUN_CAND-winMark]
+electionsf_2008[, margin := marginAbs / VOTO_MUN_TOTAL]
 
 #######Calculating vote share for eleicoes nao-regulares (there is one case of suplementar with runoff, 
 # so first I have to exclude this case)
@@ -1154,27 +1095,20 @@ table(cand_2008_supv5$rankvote, cand_2008_supv5$DESC_SIT_TOT_TURNO)
 cand_2008_supv6 <- cand_2008_supv5 %>% filter(rankvoter== 1 | rankvoter== 2)
 table(cand_2008_supv6$DESC_SIT_TOT_TURNO) #half and half
 
+electionsf_sup_2008 <- data.table(cand_2008_supv6)
+electionsf_sup_2008 = electionsf_sup_2008[rankvoter <= 2]
+
 #Getting vote margins
-muns_sup <- unique(cand_2008_supv6$SIGLA_UE)
+muns_sup <- unique(electionsf_sup_2008$SIGLA_UE)
+#Check
+stopifnot(length(unique(muns_sup))==length(muns_sup))
 
-electionsf_sup_2008 <- NULL
+electionsf_sup_2008[, lostMark := VOTO_MUN_CAND[rankvoter == 2], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_sup_2008[, winMark := VOTO_MUN_CAND[rankvoter == 1], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_sup_2008[rankvoter == 1, marginAbs := VOTO_MUN_CAND-lostMark]
+electionsf_sup_2008[rankvoter == 2, marginAbs := VOTO_MUN_CAND-winMark]
+electionsf_sup_2008[, margin := marginAbs / VOTO_MUN_TOTAL]
 
-for (i in 1:length(muns_sup)){
-  
-  mun <- cand_2008_supv6[which(cand_2008_supv6$SIGLA_UE==muns_sup[i]), ]
-  
-  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
-  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
-  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
-  
-  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
-  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
-  
-  electionsf_sup_2008 <- bind_rows(electionsf_sup_2008, margin_winner, margin_runner)
-  print(i)
-  
-} 
 
 #Adding place with runoff and eleicoes nao regulares
 
@@ -1352,27 +1286,19 @@ cand_2012v5 <- bind_rows(cand_2012v4, cand_2012_runoffv3)
 cand_2012v6 <- cand_2012v5 %>% filter(rankvoter== 1 | rankvoter== 2)
 table(cand_2012v6$DESC_SIT_TOT_TURNO) #half and half
 
+electionsf_2012 <- data.table(cand_2012v6)
+electionsf_2012 = electionsf_2012[rankvoter <=2]
+
 #Getting vote margins
-muns <- unique(cand_2012v6$SIGLA_UE)
+muns <- unique(electionsf_2012$SIGLA_UE)
+#Check
+stopifnot(length(unique(muns))==length(muns))
 
-electionsf_2012 <- NULL
-
-for (i in 1:length(muns)){
-  
-  mun <- cand_2012v6[which(cand_2012v6$SIGLA_UE==muns[i]), ]
-  
-  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
-  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
-  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
-
-  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
-  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
-
-  electionsf_2012 <- bind_rows(electionsf_2012, margin_winner, margin_runner)
-  print(i)
-  
-} 
+electionsf_2012[, lostMark := VOTO_MUN_CAND[rankvoter == 2], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_2012[, winMark := VOTO_MUN_CAND[rankvoter == 1], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_2012[rankvoter == 1, marginAbs := VOTO_MUN_CAND-lostMark]
+electionsf_2012[rankvoter == 2, marginAbs := VOTO_MUN_CAND-winMark]
+electionsf_2012[, margin := marginAbs / VOTO_MUN_TOTAL]
 
 #######Calculating vote share for eleicoes nao-regulares (that only happened in places that just had runoffs)
 
@@ -1430,27 +1356,19 @@ table(cand_2012_supv5$rankvote, cand_2012_supv5$DESC_SIT_TOT_TURNO)
 cand_2012_supv6 <- cand_2012_supv5 %>% filter(rankvoter== 1 | rankvoter== 2)
 table(cand_2012_supv6$DESC_SIT_TOT_TURNO) #half and half
 
+electionsf_sup_2012 <- data.table(cand_2012_supv6)
+electionsf_sup_2012 = electionsf_sup_2012[rankvoter <= 2]
+
 #Getting vote margins
-muns_sup <- unique(cand_2012_supv6$SIGLA_UE)
+muns_sup <- unique(electionsf_sup_2012$SIGLA_UE)
+#Check
+stopifnot(length(unique(muns_sup))==length(muns_sup))
 
-electionsf_sup_2012 <- NULL
-
-for (i in 1:length(muns_sup)){
-  
-  mun <- cand_2012_supv6[which(cand_2012_supv6$SIGLA_UE==muns_sup[i]), ]
-  
-  vote_margin_share <- max(mun$VOTO_CAND_SHARE) - min(mun$VOTO_CAND_SHARE) 
-  vote_margin_abs <- max(mun$VOTO_MUN_CAND) - min(mun$VOTO_MUN_CAND)
-  winner <- mun %>% filter(DESC_SIT_TOT_TURNO == "ELEITO")
-  runner_up <- mun %>% filter(DESC_SIT_TOT_TURNO == "NÃO ELEITO")
-  
-  margin_winner <- winner %>% mutate(vote_margin_share = vote_margin_share, vote_margin_abs = vote_margin_abs)
-  margin_runner <- runner_up %>% mutate(vote_margin_share = -vote_margin_share, vote_margin_abs = -vote_margin_abs)
-  
-  electionsf_sup_2012 <- bind_rows(electionsf_sup_2012, margin_winner, margin_runner)
-  print(i)
-  
-} 
+electionsf_sup_2012[, lostMark := VOTO_MUN_CAND[rankvoter == 2], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_sup_2012[, winMark := VOTO_MUN_CAND[rankvoter == 1], by = list(SIGLA_UE,ANO_ELEICAO)]
+electionsf_sup_2012[rankvoter == 1, marginAbs := VOTO_MUN_CAND-lostMark]
+electionsf_sup_2012[rankvoter == 2, marginAbs := VOTO_MUN_CAND-winMark]
+electionsf_sup_2012[, margin := marginAbs / VOTO_MUN_TOTAL]
 
 ######### Binding elections (regulares and nao regulares)
 electionsf_2012 <- electionsf_2012 %>% bind_cols(data_frame(TYPE_ELECTION = rep("regular", nrow(electionsf_2012))))  
