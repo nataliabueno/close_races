@@ -154,7 +154,7 @@ ufs <- c("AC", "AL", "AP", "AM", "BA",
          "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
          "RN", "RS", "RO","RR","SC", "SP", "SE", "TO") #NO DF
 
-labels_pre2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DESCRICAO_ELEICAO",
+labels_pre2012c <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DESCRICAO_ELEICAO",
                     "SIGLA_UF", "SIGLA_UE", "DESCRICAO_UE", "CODIGO_CARGO", "DESCRICAO_CARGO",
                      "NOME_CANDIDATO", "SEQUENCIAL_CANDIDATO", "NUMERO_CANDIDATO", "CPF_CANDIDATO",
                      "NOME_URNA_CANDIDATO", "COD_SITUACAO_CANDIDATURA", "DES_SITUACAO_CANDIDATURA",
@@ -172,7 +172,7 @@ files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unz
 cand_2000 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2000 <- do.call("rbind", cand_2000)
-names(cand_2000) <- labels_pre2012
+names(cand_2000) <- labels_pre2012c
 cand_2000 <- as_tibble(cand_2000)
 
 #candidates 2004
@@ -180,7 +180,7 @@ files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unz
 cand_2004 <- lapply(files, read.table, sep = ";", header=F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2004 <- do.call("rbind", cand_2004)
-names(cand_2004) <- labels_pre2012
+names(cand_2004) <- labels_pre2012c
 cand_2004 <- as_tibble(cand_2004)
 
 #candidates 2008
@@ -188,11 +188,11 @@ files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unz
 cand_2008 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2008 <- do.call("rbind", cand_2008)
-names(cand_2008) <- labels_pre2012
+names(cand_2008) <- labels_pre2012c
 cand_2008 <- as_tibble(cand_2008)
 
 #candidates 2012
-labels_2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DESCRICAO_ELEICAO",
+labels_2012c <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DESCRICAO_ELEICAO",
                    "SIGLA_UF", "SIGLA_UE", "DESCRICAO_UE", "CODIGO_CARGO", "DESCRICAO_CARGO",
                    "NOME_CANDIDATO", "SEQUENCIAL_CANDIDATO", "NUMERO_CANDIDATO", "CPF_CANDIDATO",
                    "NOME_URNA_CANDIDATO", "COD_SITUACAO_CANDIDATURA", "DES_SITUACAO_CANDIDATURA",
@@ -208,12 +208,12 @@ labels_2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DE
 files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2012/consulta_cand_2012_", ufs, ".txt"))
 cand_2012 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
-cand_2012 <- do.call("rbind", cand_2012)
+cand_2012 <- do.call("rbind", cand_2012c)
 names(cand_2012) <- labels_2012
 cand_2012 <- as_tibble(cand_2012)
 
 #candidates 2016
-labels_2016 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DESCRICAO_ELEICAO",
+labels_2016c <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DESCRICAO_ELEICAO",
                   "SIGLA_UF", "SIGLA_UE", "DESCRICAO_UE", "CODIGO_CARGO", "DESCRICAO_CARGO",
                   "NOME_CANDIDATO", "SEQUENCIAL_CANDIDATO", "NUMERO_CANDIDATO", "CPF_CANDIDATO",
                   "NOME_URNA_CANDIDATO", "COD_SITUACAO_CANDIDATURA", "DES_SITUACAO_CANDIDATURA",
@@ -229,7 +229,7 @@ labels_2016 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DE
 files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2016/consulta_cand_2016_",ufs, ".txt"))
 cand_2016 <- lapply(files, read.table, sep = ";", 
                     header = F, stringsAsFactors = F, fill = T, fileEncoding = "latin1") 
-cand_2016 <- do.call("rbind", cand_2016)
+cand_2016 <- do.call("rbind", cand_2016c)
 names(cand_2016) <- labels_2016
 cand_2016 <- as_tibble(cand_2016)
 
@@ -307,7 +307,7 @@ files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unz
 cand_2002 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2002 <- do.call("rbind", cand_2002)
-names(cand_2002) <- labels_pre2012
+names(cand_2002) <- labels_pre2012c
 cand_2002 <- as_tibble(cand_2002)
 
 #candidates 2006
@@ -315,7 +315,7 @@ files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unz
 cand_2006 <- lapply(files, read.table, sep = ";", header=F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2006 <- do.call("rbind", cand_2006)
-names(cand_2006) <- labels_pre2012
+names(cand_2006) <- labels_pre2012c
 cand_2006 <- as_tibble(cand_2006)
 
 #candidates 2010
@@ -323,7 +323,7 @@ files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unz
 cand_2010 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2010 <- do.call("rbind", cand_2010)
-names(cand_2010) <- labels_pre2012
+names(cand_2010) <- labels_pre2012c
 cand_2010 <- as_tibble(cand_2010)
 
 #candidates 2014
@@ -331,7 +331,7 @@ files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unz
 cand_2014 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2014 <- do.call("rbind", cand_2014)
-names(cand_2014) <- labels_2012
+names(cand_2014) <- labels_2012c
 cand_2014 <- as_tibble(cand_2014)
 
 cand_2002_2014 <- list(cand_2002, cand_2006, cand_2010, cand_2014)
