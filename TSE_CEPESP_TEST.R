@@ -415,7 +415,7 @@ load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2000_201
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2002_2014.RData")
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2002_2014.RData")
 
-results <- as_tibble(matrix(NA, 5, 3))
+results <- as_tibble(matrix(NA, 9, 3))
 results[,1] <- c(2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016)
 names(results) <- c("ANO_ELEICAO", "N_UE_VOT", "N_UE_CAND")
 
@@ -482,4 +482,4 @@ cand_2016 <- cand_2000_2016[[5]]
 results[9,2] <- vot_2016 %>% distinct(SIGLA_UE) %>% count()
 results[9,3] <- cand_2016 %>% distinct(SIGLA_UE) %>% count()
 
-
+write.csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/numero_municipios.csv")
