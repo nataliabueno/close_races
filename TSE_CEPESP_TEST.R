@@ -331,7 +331,7 @@ files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unz
 cand_2014 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2014 <- do.call("rbind", cand_2014)
-names(cand_2014) <- labels_2012c
+names(cand_2014) <- labels_2016c
 cand_2014 <- as_tibble(cand_2014)
 
 cand_2002_2014 <- list(cand_2002, cand_2006, cand_2010, cand_2014)
@@ -404,7 +404,7 @@ results[1,3] <- cand_2000 %>% distinct(SIGLA_UE) %>% count()
 vot_2002 <- vot_2002_2014[[1]]
 cand_2002 <- cand_2002_2014[[1]]
 
-results[2,2] <- vot_2002 %>% distinct(SIGLA_UE) %>% count()
+results[2,2] <- vot_2002 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results[2,3] <- cand_2002 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2004
@@ -418,7 +418,7 @@ results[3,3] <- cand_2000 %>% distinct(SIGLA_UE) %>% count()
 vot_2006 <- vot_2002_2014[[2]]
 cand_2006 <- cand_2002_2014[[2]]
 
-results[4,2] <- vot_2006 %>% distinct(SIGLA_UE) %>% count()
+results[4,2] <- vot_2006 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results[4,3] <- cand_2006 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2008
@@ -432,7 +432,7 @@ results[5,3] <- cand_2008 %>% distinct(SIGLA_UE) %>% count()
 vot_2010 <- vot_2002_2014[[3]]
 cand_2010 <- cand_2002_2014[[3]]
 
-results[6,2] <- vot_2010 %>% distinct(SIGLA_UE) %>% count()
+results[6,2] <- vot_2010 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results[6,3] <- cand_2010 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2012
@@ -446,7 +446,7 @@ results[7,3] <- cand_2012 %>% distinct(SIGLA_UE) %>% count()
 vot_2014 <- vot_2002_2014[[4]]
 cand_2014 <- cand_2002_2014[[4]]
 
-results[8,2] <- vot_2014 %>% distinct(SIGLA_UE) %>% count()
+results[8,2] <- vot_2014 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results[8,3] <- cand_2014 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2016
@@ -456,4 +456,4 @@ cand_2016 <- cand_2000_2016[[5]]
 results[9,2] <- vot_2016 %>% distinct(SIGLA_UE) %>% count()
 results[9,3] <- cand_2016 %>% distinct(SIGLA_UE) %>% count()
 
-write.csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/numero_municipios.csv")
+write.csv(results, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/numero_municipios.csv")
