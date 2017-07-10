@@ -17,6 +17,7 @@ par(mfrow=c(1,1))
 #libraries used
 library(tidyverse)
 library(eeptools)
+library(readr)
 
 #Change your working directory here
 dir <- "~/Dropbox/LOCAL_ELECTIONS/"
@@ -149,10 +150,10 @@ vot_2016 <- get_tse(url_cand16, file_d, file_un)
 
 ###################################################################
 
-ufs <- c("AC", "AL", "AP", "AM", "BA",     
-         "CE", "ES", "GO", "MA", "MT", "MS",
+ufs <- c("AC", "AL", "AP", "AM", "BA", "BR",   
+         "CE", "DF", "ES", "GO", "MA", "MT", "MS",
          "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
-         "RN", "RS", "RO","RR","SC", "SP", "SE", "TO") #NO DF
+         "RN", "RS", "RO","RR","SC", "SP", "SE", "TO", "ZZ")
 
 labels_pre2012c <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DESCRICAO_ELEICAO",
                     "SIGLA_UF", "SIGLA_UE", "DESCRICAO_UE", "CODIGO_CARGO", "DESCRICAO_CARGO",
@@ -168,7 +169,8 @@ labels_pre2012c <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO",
                     "DESC_SIT_TOT_TURNO")
 
 #candidates 2000
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2000/consulta_cand_2000_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2000/consulta_cand_2000_",
+                        ufs_n[!ufs_n %in% c("BR", "ZZ", "DF")], ".txt"))
 cand_2000 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2000 <- do.call("rbind", cand_2000)
@@ -176,7 +178,8 @@ names(cand_2000) <- labels_pre2012c
 cand_2000 <- as_tibble(cand_2000)
 
 #candidates 2004
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2004/consulta_cand_2004_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2004/consulta_cand_2004_",
+                        ufs_n[!ufs_n %in% c("BR", "ZZ", "DF")], ".txt"))
 cand_2004 <- lapply(files, read.table, sep = ";", header=F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2004 <- do.call("rbind", cand_2004)
@@ -184,7 +187,8 @@ names(cand_2004) <- labels_pre2012c
 cand_2004 <- as_tibble(cand_2004)
 
 #candidates 2008
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2008/consulta_cand_2008_", ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2008/consulta_cand_2008_",
+                        ufs_n[!ufs_n %in% c("BR", "ZZ", "DF")], ".txt"))
 cand_2008 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2008 <- do.call("rbind", cand_2008)
@@ -205,7 +209,8 @@ labels_2012c <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "D
                    "NOME_MUNICIPIO_NASCIMENTO", "DESPESA_MAX_CAMPANHA", "COD_SIT_TOT_TURNO",
                    "DESC_SIT_TOT_TURNO", "EMAIL_CANDIDATO")
 
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2012/consulta_cand_2012_", ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2012/consulta_cand_2012_", 
+                        ufs_n[!ufs_n %in% c("BR", "ZZ", "DF")], ".txt"))
 cand_2012 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2012 <- do.call("rbind", cand_2012c)
@@ -226,7 +231,8 @@ labels_2016c <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "D
                   "CODIGO_MUNICIPIO_NASCIMENTO", "NOME_MUNICIPIO_NASCIMENTO", "DESPESA_MAX_CAMPANHA",
                   "COD_SIT_TOT_TURNO", "DESC_SIT_TOT_TURNO", "EMAIL_CANDIDATO")
 
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2016/consulta_cand_2016_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2016/consulta_cand_2016_",
+                        ufs_n[!ufs_n %in% c("BR", "ZZ", "DF")], ".txt"))
 cand_2016 <- lapply(files, read.table, sep = ";", 
                     header = F, stringsAsFactors = F, fill = T, fileEncoding = "latin1") 
 cand_2016 <- do.call("rbind", cand_2016c)
@@ -245,7 +251,9 @@ labels_pre2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", 
                   "SIGLA_PARTIDO", "NOME_PARTIDO", "SEQUENCIAL_LEGENDA", "NOME_COLIGACAO", "COMPOSICAO_LEGENDA",
                   "TOTAL_VOTOS")
 
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2000/votacao_candidato_munzona_2000_",ufs, ".txt"))
+#Voting 2000
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2000/votacao_candidato_munzona_2000_",
+                        ufs_n[!ufs_n %in% c("BR", "ZZ", "DF")], ".txt"))
 vot_2000 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 vot_2000 <- do.call("rbind", vot_2000)
@@ -253,7 +261,8 @@ names(vot_2000) <- labels_pre2012
 vot_2000 <- as_tibble(vot_2000)
 
 #Voting data 2004
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2004/votacao_candidato_munzona_2004_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2004/votacao_candidato_munzona_2004_",
+                        ufs_n[!ufs_n %in% c("BR", "ZZ", "DF")], ".txt"))
 vot_2004 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 vot_2004 <- do.call("rbind", vot_2004)
@@ -261,7 +270,8 @@ names(vot_2004) <- labels_pre2012
 vot_2004 <- as_tibble(vot_2004)
 
 #Voting data 2008
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2008/votacao_candidato_munzona_2008_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2008/votacao_candidato_munzona_2008_",
+                        ufs_n[!ufs_n %in% c("BR", "ZZ", "DF")], ".txt"))
 vot_2008 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors=F, fill = T, fileEncoding = "windows-1252") 
 vot_2008 <- do.call("rbind", vot_2008)
@@ -269,7 +279,8 @@ names(vot_2008) <- labels_pre2012
 vot_2008 <- as_tibble(vot_2008)
 
 #voting data 2012
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2012/votacao_candidato_munzona_2012_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2012/votacao_candidato_munzona_2012_",
+                        ufs_n[!ufs_n %in% c("BR", "ZZ", "DF")], ".txt"))
 vot_2012 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 vot_2012 <- do.call("rbind", vot_2012)
@@ -285,7 +296,8 @@ labels_2016 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DE
                   "TOTAL_VOTOS", "TRANSITO")
 
 #voting data 2016
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2016/votacao_candidato_munzona_2016_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2016/votacao_candidato_munzona_2016_",
+                        ufs_n[!ufs_n %in% c("BR", "ZZ", "DF")], ".txt"))
 vot_2016 <- lapply(files, read.table, sep=";", 
                    header=F, stringsAsFactors=F, fill = T, fileEncoding = "latin1") 
 vot_2016 <- do.call("rbind", vot_2016)
@@ -297,13 +309,18 @@ save(vot_2000_2016, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_
 
 #NATIONAL ELECTIONS
 
-ufs <- c("AC", "AL", "AP", "AM", "BA",     
-         "CE", "DF", "ES", "GO", "MA", "MT", "MS",
-         "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
-         "RN", "RS", "RO","RR","SC", "SP", "SE", "TO") 
+#candidates 1998
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_1998/consulta_cand_1998_",
+                        ufs_n[!ufs_n %in% c("ZZ")], ".txt"))
+cand_1998 <- lapply(files, read.table, sep = ";", header = F, 
+                    stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
+cand_1998 <- do.call("rbind", cand_1998)
+names(cand_1998) <- labels_pre2012c
+cand_1998 <- as_tibble(cand_1998)
 
 #candidates 2002
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2002/consulta_cand_2002_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2002/consulta_cand_2002_",
+                        ufs_n[!ufs_n %in% c("ZZ")], ".txt"))
 cand_2002 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2002 <- do.call("rbind", cand_2002)
@@ -311,7 +328,8 @@ names(cand_2002) <- labels_pre2012c
 cand_2002 <- as_tibble(cand_2002)
 
 #candidates 2006
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2006/consulta_cand_2006_",ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2006/consulta_cand_2006_",
+                        ufs_n[!ufs_n %in% c("ZZ")], ".txt"))
 cand_2006 <- lapply(files, read.table, sep = ";", header=F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2006 <- do.call("rbind", cand_2006)
@@ -319,7 +337,8 @@ names(cand_2006) <- labels_pre2012c
 cand_2006 <- as_tibble(cand_2006)
 
 #candidates 2010
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2010/consulta_cand_2010_", ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2010/consulta_cand_2010_", 
+                        ufs_n[!ufs_n %in% c("ZZ")], ".txt"))
 cand_2010 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2010 <- do.call("rbind", cand_2010)
@@ -327,15 +346,16 @@ names(cand_2010) <- labels_pre2012c
 cand_2010 <- as_tibble(cand_2010)
 
 #candidates 2014
-files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2014/consulta_cand_2014_", ufs, ".txt"))
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/consulta_cand/consulta_cand_2014/consulta_cand_2014_", 
+                        ufs_n[!ufs_n %in% c("ZZ")], ".txt"))
 cand_2014 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2014 <- do.call("rbind", cand_2014)
 names(cand_2014) <- labels_2016c
 cand_2014 <- as_tibble(cand_2014)
 
-cand_2002_2014 <- list(cand_2002, cand_2006, cand_2010, cand_2014)
-save(cand_2002_2014, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2002_2014.RData")
+cand_1998_2014 <- list(cand_1998, cand_2002, cand_2006, cand_2010, cand_2014)
+save(cand_1998_2014, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_1998_2014.RData")
 
 #Voting data 2000
 labels_pre2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", "DESCRICAO_ELEICAO",
@@ -346,6 +366,16 @@ labels_pre2012 <- c("DATA_GERACAO", "HORA_GERACAO", "ANO_ELEICAO", "NUM_TURNO", 
                     "SIGLA_PARTIDO", "NOME_PARTIDO", "SEQUENCIAL_LEGENDA", "NOME_COLIGACAO", "COMPOSICAO_LEGENDA",
                     "TOTAL_VOTOS")
 
+#Voting 1998
+files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_1998/votacao_candidato_munzona_1998_",
+                        ufs, ".txt"))
+vot_1998 <- lapply(files, read.table, sep = ";", 
+                   header = F, stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
+vot_1998 <- do.call("rbind", vot_1998)
+names(vot_1998) <- labels_pre2012
+vot_1998 <- as_tibble(vot_1998)
+
+#Voting 1998
 files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2002/votacao_candidato_munzona_2002_",ufs, ".txt"))
 vot_2002 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
@@ -378,7 +408,7 @@ names(vot_2014) <- labels_2016
 vot_2014 <- as_tibble(vot_2014)
 
 vot_2002_2014 <- list(vot_2002, vot_2006, vot_2010, vot_2014)
-save(vot_2002_2014, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2002_2014.RData")
+save(vot_2002_2014, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_1998_2014.RData")
 
 ###################################################################
 #2. NUMBER OF MUNICIPALITIES PER ELECTION
@@ -386,11 +416,11 @@ save(vot_2002_2014, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_
 
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2000_2016.RData")
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2000_2016.RData")
-load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_2002_2014.RData")
-load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2002_2014.RData")
+load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/vot_1998_2014.RData")
+load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_1998_2014.RData")
 
 results <- as_tibble(matrix(NA, 9, 3))
-results[,1] <- c(2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016)
+results[,1] <- c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016)
 names(results) <- c("ANO_ELEICAO", "N_UE_VOT", "N_UE_CAND")
 
 #######Elections 2000
@@ -460,5 +490,34 @@ write.csv(results, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/numero_municipios.csv"
 
 ############### Comparing Data Abraao, CEPESP-API, TSE and IBGE
 
+ab <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/abraao_raw_data/uf-cod-mun.csv", 
+               col_names = FALSE)
 
+api98 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_1998.csv") 
+api00 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_2000.csv")
+api02 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_2002.csv")
+api04 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_2004.csv")
+api06 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_2006.csv")
+api08 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_2008.csv")
+api10 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_2010.csv")
+api12 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_2012.csv")
+api14 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_2014.csv")
+api16 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_2016.csv")
 
+results_cepesp <- as_tibble(matrix(NA, 10, 2))
+results_cepesp[,1] <- c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016)
+names(results_cepesp) <- c("ANO_ELEICAO", "N_MUN")
+
+results_cepesp[1,2] <- api98 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results_cepesp[2,2] <- api00 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results_cepesp[3,2] <- api02 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results_cepesp[4,2] <- api04 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results_cepesp[5,2] <- api06 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results_cepesp[6,2] <- api08 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results_cepesp[7,2] <- api10 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results_cepesp[8,2] <- api12 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results_cepesp[9,2] <- api14 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results_cepesp[10,2] <- api16 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+
+#combining
+  
