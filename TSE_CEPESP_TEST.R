@@ -457,3 +457,8 @@ results[9,2] <- vot_2016 %>% distinct(SIGLA_UE) %>% count()
 results[9,3] <- cand_2016 %>% distinct(SIGLA_UE) %>% count()
 
 write.csv(results, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/numero_municipios.csv")
+
+############### Comparing Data Abraao, CEPESP-API, TSE and IBGE
+
+
+
