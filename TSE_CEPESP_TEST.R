@@ -425,79 +425,99 @@ load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_1998_201
 
 results <- as_tibble(matrix(NA, 10, 3))
 results[,1] <- c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016)
+results2 <- as_tibble(matrix(NA, 10, 3))
+results2[,1] <- c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016)
 names(results) <- c("ANO_ELEICAO", "N_UE_VOT", "N_UE_CAND")
+names(results2) <- c("ANO_ELEICAO", "N_UE_VOT", "N_UE_CAND")
 
 #######Elections 1998
 vot_1998 <- vot_1998_2014[[1]]
 cand_1998 <- cand_1998_2014[[1]]
 
-results[1,2] <- vot_2000 %>% distinct(SIGLA_UE) %>% count()
-results[1,3] <- cand_2000 %>% distinct(SIGLA_UE) %>% count()
+results[1,2] <- vot_1998 %>% distinct(SIGLA_UE) %>% count()
+results[1,3] <- cand_1998 %>% distinct(SIGLA_UE) %>% count()
+
+results2[1,2] <- vot_1998 %>% distinct(SIGLA_UE) %>% count()
+results2[1,3] <- cand_1998 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2000
 vot_2000 <- vot_2000_2016[[1]]
 cand_2000 <- cand_2000_2016[[1]]
 
-results[1,2] <- vot_2000 %>% distinct(SIGLA_UE) %>% count()
-results[1,3] <- cand_2000 %>% distinct(SIGLA_UE) %>% count()
+results[2,2] <- vot_2000 %>% distinct(SIGLA_UE) %>% count()
+results[2,3] <- cand_2000 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2002
-vot_2002 <- vot_2002_2014[[2]]
-cand_2002 <- cand_2002_2014[[2]]
+vot_2002 <- vot_1998_2014[[2]]
+cand_2002 <- cand_1998_2014[[2]]
 
-results[2,2] <- vot_2002 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results[2,3] <- cand_2002 %>% distinct(SIGLA_UE) %>% count()
+results[3,2] <- vot_2002 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results[3,3] <- cand_2002 %>% distinct(SIGLA_UE) %>% count()
+
+results2[3,3] <- vot_2002 %>% filter(!SIGLA_UF %in% "ZZ") %>% distinct(SIGLA_UE) %>% count()
+results2[3,3] <- cand_2002 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2004
 vot_2004 <- vot_2000_2016[[2]]
 cand_2004 <- cand_2000_2016[[2]]
 
-results[3,2] <- vot_2000 %>% distinct(SIGLA_UE) %>% count()
-results[3,3] <- cand_2000 %>% distinct(SIGLA_UE) %>% count()
+results[4,2] <- vot_2000 %>% distinct(SIGLA_UE) %>% count()
+results[4,3] <- cand_2000 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2006
-vot_2006 <- vot_2002_2014[[3]]
-cand_2006 <- cand_2002_2014[[3]]
+vot_2006 <- vot_1998_2014[[3]]
+cand_2006 <- cand_1998_2014[[3]]
 
-results[4,2] <- vot_2006 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results[4,3] <- cand_2006 %>% distinct(SIGLA_UE) %>% count()
+results[5,2] <- vot_2006 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results[5,3] <- cand_2006 %>% distinct(SIGLA_UE) %>% count()
+
+results2[5,3] <- vot_2006 %>% filter(!SIGLA_UF %in% "ZZ") %>% distinct(SIGLA_UE) %>% count()
+results2[5,3] <- cand_2006 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2008
 vot_2008 <- vot_2000_2016[[3]]
 cand_2008 <- cand_2000_2016[[3]]
 
-results[5,2] <- vot_2008 %>% distinct(SIGLA_UE) %>% count()
-results[5,3] <- cand_2008 %>% distinct(SIGLA_UE) %>% count()
+results[6,2] <- vot_2008 %>% distinct(SIGLA_UE) %>% count()
+results[6,3] <- cand_2008 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2010
-vot_2010 <- vot_2002_2014[[4]]
-cand_2010 <- cand_2002_2014[[4]]
+vot_2010 <- vot_1998_2014[[4]]
+cand_2010 <- cand_1998_2014[[4]]
 
-results[6,2] <- vot_2010 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results[6,3] <- cand_2010 %>% distinct(SIGLA_UE) %>% count()
+results[7,2] <- vot_2010 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results[7,3] <- cand_2010 %>% distinct(SIGLA_UE) %>% count()
+
+results2[7,3] <- vot_2010 %>% filter(!SIGLA_UF %in% c("ZZ", "VT")) %>% distinct(SIGLA_UE) %>% count()
+results2[7,3] <- cand_2010 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2012
 vot_2012 <- vot_2000_2016[[4]]
 cand_2012 <- cand_2000_2016[[4]]
 
-results[7,2] <- vot_2012 %>% distinct(SIGLA_UE) %>% count()
-results[7,3] <- cand_2012 %>% distinct(SIGLA_UE) %>% count()
+results[8,2] <- vot_2012 %>% distinct(SIGLA_UE) %>% count()
+results[8,3] <- cand_2012 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2014
-vot_2014 <- vot_2002_2014[[5]]
-cand_2014 <- cand_2002_2014[[5]]
+vot_2014 <- vot_1998_2014[[5]]
+cand_2014 <- cand_1998_2014[[5]]
 
-results[8,2] <- vot_2014 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results[8,3] <- cand_2014 %>% distinct(SIGLA_UE) %>% count()
+results[9,2] <- vot_2014 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results[9,3] <- cand_2014 %>% distinct(SIGLA_UE) %>% count()
+
+results2[9,3] <- vot_2014 %>% filter(!SIGLA_UF %in% c("ZZ")) %>% distinct(SIGLA_UE) %>% count()
+results2[9,3] <- cand_2014 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2016
 vot_2016 <- vot_2000_2016[[5]]
 cand_2016 <- cand_2000_2016[[5]]
 
-results[9,2] <- vot_2016 %>% distinct(SIGLA_UE) %>% count()
-results[9,3] <- cand_2016 %>% distinct(SIGLA_UE) %>% count()
+results[10,2] <- vot_2016 %>% distinct(SIGLA_UE) %>% count()
+results[10,3] <- cand_2016 %>% distinct(SIGLA_UE) %>% count()
 
 write.csv(results, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/numero_municipios.csv")
+write.csv(results2, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/numero_municipios_noZZVT.csv")
+
 
 ############### Comparing Data Abraao, CEPESP-API, TSE and IBGE
 
@@ -531,4 +551,6 @@ results_cepesp[9,2] <- api14 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results_cepesp[10,2] <- api16 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 
 #combining
+
+r
   
