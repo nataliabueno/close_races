@@ -568,3 +568,41 @@ table(missing_data$SIGLA_UF)
 table(missing_data$NOME_MUNICIPIO)
 
 write.csv(results_all, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/municipios_missing.csv")
+
+################ Codes for nonregular elections
+
+table(vot_1998$DESCRICAO_ELEICAO)
+table(cand_1998$DESCRICAO_ELEICAO)
+
+table(vot_2000$DESCRICAO_ELEICAO)
+table(cand_2000$DESCRICAO_ELEICAO)
+
+table(vot_2002$DESCRICAO_ELEICAO)
+table(cand_2002$DESCRICAO_ELEICAO)
+
+table(vot_2004$DESCRICAO_ELEICAO)
+table(cand_2004$DESCRICAO_ELEICAO)
+
+table(vot_2006$DESCRICAO_ELEICAO)
+table(cand_2006$DESCRICAO_ELEICAO)
+
+table(vot_2008$DESCRICAO_ELEICAO)
+table(cand_2008$DESCRICAO_ELEICAO)
+
+table(vot_2010$DESCRICAO_ELEICAO)
+table(cand_2010$DESCRICAO_ELEICAO)
+
+table(vot_2012$DESCRICAO_ELEICAO)
+table(cand_2012$DESCRICAO_ELEICAO)
+
+table(vot_2014$DESCRICAO_ELEICAO)
+table(cand_2014$DESCRICAO_ELEICAO)
+
+table(vot_2016$DESCRICAO_ELEICAO)
+table(cand_2016$DESCRICAO_ELEICAO)
+
+
+
+
+
+
