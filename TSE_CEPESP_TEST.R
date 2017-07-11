@@ -434,10 +434,10 @@ names(results2) <- c("ANO_ELEICAO", "N_UE_VOT", "N_UE_CAND")
 vot_1998 <- vot_1998_2014[[1]]
 cand_1998 <- cand_1998_2014[[1]]
 
-results[1,2] <- vot_1998 %>% distinct(SIGLA_UE) %>% count()
+results[1,2] <- vot_1998 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results[1,3] <- cand_1998 %>% distinct(SIGLA_UE) %>% count()
 
-results2[1,2] <- vot_1998 %>% distinct(SIGLA_UE) %>% count()
+results2[1,2] <- vot_1998 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results2[1,3] <- cand_1998 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2000
@@ -454,7 +454,7 @@ cand_2002 <- cand_1998_2014[[2]]
 results[3,2] <- vot_2002 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results[3,3] <- cand_2002 %>% distinct(SIGLA_UE) %>% count()
 
-results2[3,3] <- vot_2002 %>% filter(!SIGLA_UF %in% "ZZ") %>% distinct(SIGLA_UE) %>% count()
+results2[3,2] <- vot_2002 %>% filter(!SIGLA_UF %in% "ZZ") %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results2[3,3] <- cand_2002 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2004
@@ -471,7 +471,7 @@ cand_2006 <- cand_1998_2014[[3]]
 results[5,2] <- vot_2006 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results[5,3] <- cand_2006 %>% distinct(SIGLA_UE) %>% count()
 
-results2[5,3] <- vot_2006 %>% filter(!SIGLA_UF %in% "ZZ") %>% distinct(SIGLA_UE) %>% count()
+results2[5,2] <- vot_2006 %>% filter(!SIGLA_UF %in% "ZZ") %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results2[5,3] <- cand_2006 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2008
@@ -488,7 +488,7 @@ cand_2010 <- cand_1998_2014[[4]]
 results[7,2] <- vot_2010 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results[7,3] <- cand_2010 %>% distinct(SIGLA_UE) %>% count()
 
-results2[7,3] <- vot_2010 %>% filter(!SIGLA_UF %in% c("ZZ", "VT")) %>% distinct(SIGLA_UE) %>% count()
+results2[7,2] <- vot_2010 %>% filter(!SIGLA_UF %in% c("ZZ", "VT")) %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results2[7,3] <- cand_2010 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2012
@@ -505,7 +505,7 @@ cand_2014 <- cand_1998_2014[[5]]
 results[9,2] <- vot_2014 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results[9,3] <- cand_2014 %>% distinct(SIGLA_UE) %>% count()
 
-results2[9,3] <- vot_2014 %>% filter(!SIGLA_UF %in% c("ZZ")) %>% distinct(SIGLA_UE) %>% count()
+results2[9,2] <- vot_2014 %>% filter(!SIGLA_UF %in% c("ZZ")) %>% distinct(CODIGO_MUNICIPIO) %>% count()
 results2[9,3] <- cand_2014 %>% distinct(SIGLA_UE) %>% count()
 
 #######Elections 2016
@@ -518,11 +518,9 @@ results[10,3] <- cand_2016 %>% distinct(SIGLA_UE) %>% count()
 write.csv(results, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/numero_municipios.csv")
 write.csv(results2, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/numero_municipios_noZZVT.csv")
 
+results_tse <- bind_cols(results, results2)
 
 ############### Comparing Data Abraao, CEPESP-API, TSE and IBGE
-
-ab <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/abraao_raw_data/uf-cod-mun.csv", 
-               col_names = FALSE)
 
 api98 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_1998.csv") 
 api00 <- read_csv("~/Dropbox/LOCAL_ELECTIONS/cepesp_data/cepesp_api_rawdata/mun_2000.csv")
@@ -552,5 +550,21 @@ results_cepesp[10,2] <- api16 %>% distinct(CODIGO_MUNICIPIO) %>% count()
 
 #combining
 
-r
-  
+results_all <- bind_cols(results_tse, results_cepesp)
+results_all <- results_all[-c(4, 7)]
+names(results_all) <- c("ANO_ELEICAO",
+                        "Municipios_BaseVot_TSECompleta", 
+                        "Municipios_BaseCand_TSECompleta", 
+                        "Municipios_BaseVot_TSEsemZZVT", 
+                        "Municipios_BaseCand_TSEsemZZVT", 
+                        "Municipios_Base_CEPESP_api")
+
+#What's missing in CEPESP?
+mun_2014 <- vot_2014 %>% filter(!SIGLA_UF %in% c("ZZ")) %>% distinct(CODIGO_MUNICIPIO)
+mun_2014c <- api14 %>% distinct(CODIGO_MUNICIPIO)
+missing <- mun_2014[!(mun_2014$CODIGO_MUNICIPIO %in% mun_2014c$CODIGO_MUNICIPIO), ]
+missing_data <- vot_2014 %>% filter(CODIGO_MUNICIPIO %in% missing$CODIGO_MUNICIPIO)
+table(missing_data$SIGLA_UF)
+table(missing_data$NOME_MUNICIPIO)
+
+write.csv(results_all, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/municipios_missing.csv")
