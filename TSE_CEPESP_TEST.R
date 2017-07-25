@@ -133,6 +133,21 @@ file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona
 file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2016/")
 vot_2016 <- get_tse(url_cand16, file_d, file_un)
 
+# Votacao Secao
+
+#2016
+
+for (i in 1:length(27)){
+
+file_d <-
+file_un <-   
+temp <- get_tse(url_cand16, file_d, file_un)  
+  
+}
+"http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2016_AC.zip" 
+
+
+
 ###################################################################
 #1. Combining
 
