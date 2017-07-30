@@ -137,17 +137,52 @@ vot_2016 <- get_tse(url_cand16, file_d, file_un)
 
 #2016
 
-for (i in 1:length(27)){
+ufs_2016 <- c("AC", "AL", "AP", "AM", "BA",   
+           "CE", "ES", "GO", "MA", "MT", "MS",
+           "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
+           "RN", "RS", "RO","RR","SC", "SP", "SE", "TO")
 
-file_d <-
-file_un <-   
-temp <- get_tse(url_cand16, file_d, file_un)  
-  
+for (i in 1:length(ufs_2016)){
+  url <- paste0("http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2016_", ufs_2016[i],
+                ".zip")
+  file_d <- paste0(dir_d, "original_data/votacao_secao/votacao_secao_2016_", ufs_2016[i], ".zip")
+  file_un <- paste0(dir_d, "original_unzipped/votacao_secao/votacao_secao_2016/")
+  temp <- get_tse(url, file_d, file_un)  
 }
-"http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2016_AC.zip" 
 
+#2014
 
+ufs_2014 <- c("AC", "AL", "AP", "AM", "BA", "BR",   
+              "CE", "DF", "ES", "GO", "MA", "MT", "MS",
+              "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
+              "RN", "RS", "RO","RR","SC", "SP", "SE", "TO")
 
+for (i in 1:length(ufs_2014)){
+  url <- paste0("http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2014_", ufs_2014[i],
+                ".zip")
+  file_d <- paste0(dir_d, "original_data/votacao_secao/votacao_secao_2014_", ufs_2014[i], ".zip")
+  file_un <- paste0(dir_d, "original_unzipped/votacao_secao/votacao_secao_2014/")
+  temp <- get_tse(url, file_d, file_un) 
+}
+
+#2012
+
+ufs_2012 <- c("AC", "AL", "AP", "AM", "BA",   
+              "CE", "ES", "GO", "MA", "MT", "MS",
+              "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
+              "RN", "RS", "RO","RR","SC", "SP", "SE", "TO")
+
+for (i in 1:length(ufs_2012)){
+  url <- paste0("http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2012_", ufs_2012[i],
+              ".zip")
+  file_d <- paste0(dir_d, "original_data/votacao_secao/votacao_secao_2012_", ufs_2012[i], ".zip")
+  file_un <- paste0(dir_d, "original_unzipped/votacao_secao/votacao_secao_2012/")
+  temp <- get_tse(url, file_d, file_un) 
+}
+
+<a href="http://agencia.tse.jus.br/estatistica/sead/eleicoes/eleicoes2012/votosecao/vsec_2t_AP_30102012194527.zip">Amapá</a>
+  <a href="http://agencia.tse.jus.br/estatistica/sead/eleicoes/eleicoes2012/votosecao/vsec_1t_AC.zip">Acre</a>
+  
 ###################################################################
 #1. Combining
 
@@ -552,16 +587,16 @@ results_cepesp <- as_tibble(matrix(NA, 10, 2))
 results_cepesp[,1] <- c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016)
 names(results_cepesp) <- c("ANO_ELEICAO", "N_MUN")
 
-results_cepesp[1,2] <- api98 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results_cepesp[2,2] <- api00 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results_cepesp[3,2] <- api02 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results_cepesp[4,2] <- api04 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results_cepesp[5,2] <- api06 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results_cepesp[6,2] <- api08 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results_cepesp[7,2] <- api10 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results_cepesp[8,2] <- api12 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results_cepesp[9,2] <- api14 %>% distinct(CODIGO_MUNICIPIO) %>% count()
-results_cepesp[10,2] <- api16 %>% distinct(CODIGO_MUNICIPIO) %>% count()
+results_cepesp[1,2] <- api98 %>% distinct(COD_MUN_TSE) %>% count()
+results_cepesp[2,2] <- api00 %>% distinct(COD_MUN_TSE) %>% count()
+results_cepesp[3,2] <- api02 %>% distinct(COD_MUN_TSE) %>% count()
+results_cepesp[4,2] <- api04 %>% distinct(COD_MUN_TSE) %>% count()
+results_cepesp[5,2] <- api06 %>% distinct(COD_MUN_TSE) %>% count()
+results_cepesp[6,2] <- api08 %>% distinct(COD_MUN_TSE) %>% count()
+results_cepesp[7,2] <- api10 %>% distinct(COD_MUN_TSE) %>% count()
+results_cepesp[8,2] <- api12 %>% distinct(COD_MUN_TSE) %>% count()
+results_cepesp[9,2] <- api14 %>% distinct(COD_MUN_TSE) %>% count()
+results_cepesp[10,2] <- api16 %>% distinct(COD_MUN_TSE) %>% count()
 
 #combining
 
@@ -582,7 +617,7 @@ missing_data <- vot_2014 %>% filter(CODIGO_MUNICIPIO %in% missing$CODIGO_MUNICIP
 table(missing_data$SIGLA_UF)
 table(missing_data$NOME_MUNICIPIO)
 
-write.csv(results_all, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/municipios_missing.csv")
+write.csv(results_all, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/municipios_missing_3007.csv")
 
 ################ Codes for nonregular elections
 
