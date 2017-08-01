@@ -22,7 +22,12 @@ library(qpcR)
 library(readxl)
 
 #Change your working directory here
-dir <- "~/Dropbox/LOCAL_ELECTIONS/"
+setwd("~")
+if(grepl("nataliabueno",getwd())==TRUE){#Allow for different paths in our computers
+  dir <- "~/Dropbox/LOCAL_ELECTIONS/"
+}else{
+  dir <- ""
+}
 
 #helper functions
 source(paste0(dir, "codes/helper_functions.R"))
