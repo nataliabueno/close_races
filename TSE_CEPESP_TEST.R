@@ -640,6 +640,9 @@ write.csv(missing_ids, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/mun_ids_missing.cs
 temp_2008 <- vot_2008 %>% filter(CODIGO_MUNICIPIO == 1066) #Porto Walter/AC
 temp_2002 <- vot_2002 %>% filter(CODIGO_MUNICIPIO %in% c(91065, 12734)) #BOA ESPERANCA DO NORTE/MT, AROEIRAS DO ITAIM/PI
 
+#No detalhe votacao, é necessario fazer o filtro por suplementares?
+#No votacao_secao?
+#Diferença: 
 
 ################ Codes for nonregular elections
 
@@ -673,8 +676,25 @@ table(cand_2014$DESCRICAO_ELEICAO)
 table(vot_2016$DESCRICAO_ELEICAO)
 table(cand_2016$DESCRICAO_ELEICAO)
 
+###################################################################
+#3. Cleaning candidates prior to join
+###################################################################
+
+load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2000_2016.RData")
+load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_1998_2014.RData")
+
+cand_1998 <- cand_1998_2014[[1]]
+cand_2000 <- cand_2000_2016[[1]]
+cand_2002 <- cand_1998_2014[[2]]
+cand_2004 <- cand_2000_2016[[2]]
+cand_2006 <- cand_1998_2014[[3]]
+cand_2008 <- cand_2000_2016[[3]]
+cand_2010 <- cand_1998_2014[[4]]
+cand_2012 <- cand_2000_2016[[4]]
+cand_2014 <- cand_1998_2014[[5]]
+cand_2016 <- cand_2000_2016[[5]]
 
 
+#1998
 
-
-
+temp <- cand_2008 %>%
