@@ -697,4 +697,33 @@ cand_2016 <- cand_2000_2016[[5]]
 
 #1998
 
-temp <- cand_2008 %>%
+#Test de tipo de duplicado
+
+problems <- cand_1998 %>% group_by(NUM_TURNO, NUMERO_CANDIDATO, CODIGO_CARGO, SIGLA_UE) %>%
+        summarise(total = n()) %>% filter(total > 1)
+
+casos <- cand_1998 %>% right_join(problems, by = c("NUM_TURNO", 
+            "NUMERO_CANDIDATO", "CODIGO_CARGO", "SIGLA_UE")) %>%
+             filter(COD_SITUACAO_CANDIDATURA == 2 | 
+                    COD_SITUACAO_CANDIDATURA == 4)
+
+problems_caso <- casos %>% group_by(NUM_TURNO, NUMERO_CANDIDATO, CODIGO_CARGO, SIGLA_UE) %>%
+                 summarise(total = n()) %>% filter(total > 1)
+
+maisproblems_casos <- casos %>% right_join(problems_caso, by = c("NUM_TURNO", 
+                      "NUMERO_CANDIDATO", "CODIGO_CARGO", "SIGLA_UE"))
+
+#Test de duplicados sem nenhuma modificacao
+#Example
+test_dup <- cand_1998 %>% filter(CPF_CANDIDATO == "21970068787")
+table(test_dup[1,]==test_dup[2,])
+
+#IDs of repeated lines
+repeated <- maisproblems_casos[duplicated(maisproblems_casos),]
+
+#Keeping those with wrong ballot names
+wrong_ballot <- unique(maisproblems_casos)
+
+write.csv(maisproblems_casos, file = "~/Desktop/wrong_ballot.csv")
+
+
