@@ -140,9 +140,9 @@ file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona
 file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2016/")
 vot_2016 <- get_tse(url_cand16, file_d, file_un)
 
-# Votacao Secao
+# Votacao Secao TO DO
 
-#2016
+#2016 TO DO
 
 ufs_2016 <- c("AC", "AL", "AP", "AM", "BA",   
            "CE", "ES", "GO", "MA", "MT", "MS",
@@ -157,7 +157,7 @@ for (i in 1:length(ufs_2016)){
   temp <- get_tse(url, file_d, file_un)  
 }
 
-#2014
+#2014 TO DO
 
 ufs_2014 <- c("AC", "AL", "AP", "AM", "BA", "BR",   
               "CE", "DF", "ES", "GO", "MA", "MT", "MS",
@@ -172,7 +172,7 @@ for (i in 1:length(ufs_2014)){
   temp <- get_tse(url, file_d, file_un) 
 }
 
-#2012
+#2012 TO DO
 
 ufs_2012 <- c("AC", "AL", "AP", "AM", "BA",   
               "CE", "ES", "GO", "MA", "MT", "MS",
@@ -187,8 +187,8 @@ for (i in 1:length(ufs_2012)){
   temp <- get_tse(url, file_d, file_un) 
 }
 
-<a href="http://agencia.tse.jus.br/estatistica/sead/eleicoes/eleicoes2012/votosecao/vsec_2t_AP_30102012194527.zip">Amapá</a>
-  <a href="http://agencia.tse.jus.br/estatistica/sead/eleicoes/eleicoes2012/votosecao/vsec_1t_AC.zip">Acre</a>
+#<a href="http://agencia.tse.jus.br/estatistica/sead/eleicoes/eleicoes2012/votosecao/vsec_2t_AP_30102012194527.zip">Amapá</a>
+# <a href="http://agencia.tse.jus.br/estatistica/sead/eleicoes/eleicoes2012/votosecao/vsec_1t_AC.zip">Acre</a>
   
 ###################################################################
 #1. Combining
