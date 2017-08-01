@@ -18,6 +18,7 @@ par(mfrow=c(1,1))
 library(tidyverse)
 library(eeptools)
 library(readr)
+library(qpcR)
 
 #Change your working directory here
 dir <- "~/Dropbox/LOCAL_ELECTIONS/"
@@ -610,25 +611,35 @@ names(results_all) <- c("ANO_ELEICAO",
                         "Municipios_Base_CEPESP_api")
 
 #What's not matching in TSE and CEPESP in 2000?
-cepesp <- as.character(distinct(api00, COD_MUN_TSE)$COD_MUN_TSE)
-missing_2000 <- vot_2000 %>% filter(!(SIGLA_UE %in% cepesp)) %>% distinct(SIGLA_UE)
+cepesp <- distinct(api00, COD_MUN_TSE)$COD_MUN_TSE
+missing_2000 <- vot_2000 %>% filter(!(CODIGO_MUNICIPIO %in% cepesp)) %>% distinct(CODIGO_MUNICIPIO)
 
 #What's not matching in TSE and CEPESP in 2002?
 tse <- vot_2002 %>% filter(!SIGLA_UF %in% c("ZZ"))
-cepesp <- as.character(distinct(api02, COD_MUN_TSE)$COD_MUN_TSE)
-missing_2002 <- tse %>% filter(!(SIGLA_UE %in% cepesp)) %>% distinct(SIGLA_UE)
+cepesp <- distinct(api02, COD_MUN_TSE)$COD_MUN_TSE
+missing_2002 <- tse %>% filter(!(CODIGO_MUNICIPIO %in% cepesp)) %>% distinct(CODIGO_MUNICIPIO)
 
 #What's not matching in TSE and CEPESP in 2004?
 cepesp <- distinct(api04, COD_MUN_TSE)$COD_MUN_TSE
-missing_2004 <- vot_2004 %>% filter(SIGLA_UE %in% cepesp) %>% distinct(SIGLA_UE)
+missing_2004 <- vot_2004 %>% filter(!(CODIGO_MUNICIPIO %in% cepesp)) %>% distinct(CODIGO_MUNICIPIO)
 
 #What's not matching in TSE and CEPESP in 2008?
-#tse <- distinct(vot_2008, SIGLA_UE)$SIGLA_UE
-#missing_2008 <- api08 %>% filter(COD_MUN_TSE %in% tse)
-#api08r <- api08 %>% filter(!(COD_MUN_TSE %in% missing_2008$COD_MUN_TSE))
-#tse %in%missing_2008$COD_MUN_TSE
+cepesp <- distinct(api08, COD_MUN_TSE)$COD_MUN_TSE
+tse <- distinct(vot_2008, CODIGO_MUNICIPIO)$CODIGO_MUNICIPIO
+missing_2008 <- vot_2008 %>% filter(!(CODIGO_MUNICIPIO %in% cepesp)) %>% distinct(CODIGO_MUNICIPIO)
+
+missing_ids <- qpcR:::cbind.na(missing_2000$CODIGO_MUNICIPIO, missing_2002$CODIGO_MUNICIPIO, 
+                missing_2004$CODIGO_MUNICIPIO, missing_2008$CODIGO_MUNICIPIO)
+colnames(missing_ids) <- c("muns_2000", "muns_2002", "muns_2004", "muns_2008")
 
 write.csv(results_all, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/municipios_missing_3007.csv")
+write.csv(missing_ids, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/mun_ids_missing.csv")
+
+#Example, 2008
+
+temp_2008 <- vot_2008 %>% filter(CODIGO_MUNICIPIO == 1066) #Porto Walter/AC
+temp_2002 <- vot_2002 %>% filter(CODIGO_MUNICIPIO %in% c(91065, 12734)) #BOA ESPERANCA DO NORTE/MT, AROEIRAS DO ITAIM/PI
+
 
 ################ Codes for nonregular elections
 
