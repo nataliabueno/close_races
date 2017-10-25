@@ -1,7 +1,7 @@
 ###################################################################
 ############# Downloading, Organizing and Cleaning Electoral Data
 #0. Download TSE repositorio data
-#1. Combine and merge
+#1. Combine 
 #2. Clean and get it ready for use
 ###################################################################
 ###################################################################
@@ -140,56 +140,6 @@ file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona
 file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2016/")
 vot_2016 <- get_tse(url_cand16, file_d, file_un)
 
-# Votacao Secao TO DO
-
-#2016 TO DO
-
-ufs_2016 <- c("AC", "AL", "AP", "AM", "BA",   
-           "CE", "ES", "GO", "MA", "MT", "MS",
-           "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
-           "RN", "RS", "RO","RR","SC", "SP", "SE", "TO")
-
-for (i in 1:length(ufs_2016)){
-  url <- paste0("http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2016_", ufs_2016[i],
-                ".zip")
-  file_d <- paste0(dir_d, "original_data/votacao_secao/votacao_secao_2016_", ufs_2016[i], ".zip")
-  file_un <- paste0(dir_d, "original_unzipped/votacao_secao/votacao_secao_2016/")
-  temp <- get_tse(url, file_d, file_un)  
-}
-
-#2014 TO DO
-
-ufs_2014 <- c("AC", "AL", "AP", "AM", "BA", "BR",   
-              "CE", "DF", "ES", "GO", "MA", "MT", "MS",
-              "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
-              "RN", "RS", "RO","RR","SC", "SP", "SE", "TO")
-
-for (i in 1:length(ufs_2014)){
-  url <- paste0("http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2014_", ufs_2014[i],
-                ".zip")
-  file_d <- paste0(dir_d, "original_data/votacao_secao/votacao_secao_2014_", ufs_2014[i], ".zip")
-  file_un <- paste0(dir_d, "original_unzipped/votacao_secao/votacao_secao_2014/")
-  temp <- get_tse(url, file_d, file_un) 
-}
-
-#2012 TO DO
-
-ufs_2012 <- c("AC", "AL", "AP", "AM", "BA",   
-              "CE", "ES", "GO", "MA", "MT", "MS",
-              "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
-              "RN", "RS", "RO","RR","SC", "SP", "SE", "TO")
-
-for (i in 1:length(ufs_2012)){
-  url <- paste0("http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2012_", ufs_2012[i],
-              ".zip")
-  file_d <- paste0(dir_d, "original_data/votacao_secao/votacao_secao_2012_", ufs_2012[i], ".zip")
-  file_un <- paste0(dir_d, "original_unzipped/votacao_secao/votacao_secao_2012/")
-  temp <- get_tse(url, file_d, file_un) 
-}
-
-#<a href="http://agencia.tse.jus.br/estatistica/sead/eleicoes/eleicoes2012/votosecao/vsec_2t_AP_30102012194527.zip">Amapá</a>
-# <a href="http://agencia.tse.jus.br/estatistica/sead/eleicoes/eleicoes2012/votosecao/vsec_1t_AC.zip">Acre</a>
-  
 ###################################################################
 #1. Combining
 
@@ -197,13 +147,13 @@ for (i in 1:length(ufs_2012)){
 
 # Reading candidate data
 # Reading voting data
-# Merging and Binding
+# Binding
 
 ### NATIONAL ELECTIONS
 
 # Reading candidate data
 # Reading voting data
-# Merging and Binding
+# Binding
 
 ###################################################################
 
@@ -605,7 +555,7 @@ results_cepesp[8,2] <- api12 %>% distinct(COD_MUN_TSE) %>% count()
 results_cepesp[9,2] <- api14 %>% distinct(COD_MUN_TSE) %>% count()
 results_cepesp[10,2] <- api16 %>% distinct(COD_MUN_TSE) %>% count()
 
-#combining
+#Combining Municipalities Count
 
 results_all <- bind_cols(results_tse, results_cepesp)
 results_all <- results_all[-c(4, 7)]
@@ -646,10 +596,7 @@ write.csv(missing_ids, "~/Dropbox/LOCAL_ELECTIONS/cepesp_data/mun_ids_missing.cs
 temp_2008 <- vot_2008 %>% filter(CODIGO_MUNICIPIO == 1066) #Porto Walter/AC
 temp_2002 <- vot_2002 %>% filter(CODIGO_MUNICIPIO %in% c(91065, 12734)) #BOA ESPERANCA DO NORTE/MT, AROEIRAS DO ITAIM/PI
 
-#No detalhe votacao, é necessario fazer o filtro por suplementares?
-#No votacao_secao?
-#Diferença: 
-
+ 
 ################ Codes for nonregular elections
 
 table(vot_1998$DESCRICAO_ELEICAO)
@@ -683,7 +630,7 @@ table(vot_2016$DESCRICAO_ELEICAO)
 table(cand_2016$DESCRICAO_ELEICAO)
 
 ###################################################################
-#3. Cleaning candidates prior to join
+#3. CLEANING CANDIDATES PRIOR TO JOIN
 ###################################################################
 
 load("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/cand_2000_2016.RData")
@@ -702,10 +649,10 @@ cand_2016 <- cand_2000_2016[[5]]
 
 #1998
 problems <- cand_1998 %>% group_by(NUM_TURNO, NUMERO_CANDIDATO, CODIGO_CARGO, SIGLA_UE) %>%
-        summarise(total = n()) %>% filter(total > 1)
+                          summarise(total = n()) %>% filter(total > 1)
 
 casos <- cand_1998 %>% right_join(problems, by = c("NUM_TURNO", 
-            "NUMERO_CANDIDATO", "CODIGO_CARGO", "SIGLA_UE"))
+                       "NUMERO_CANDIDATO", "CODIGO_CARGO", "SIGLA_UE"))
 
 #Control for repeated
 repeated_casos <- casos[duplicated(casos),]
@@ -714,13 +661,13 @@ repeated_casos <- casos[duplicated(casos),]
 casos <- unique(casos)
 
 casos <- casos %>% filter(COD_SITUACAO_CANDIDATURA == 2 | 
-                   COD_SITUACAO_CANDIDATURA == 4)
+                          COD_SITUACAO_CANDIDATURA == 4)
 
 problems_caso <- casos %>% group_by(NUM_TURNO, NUMERO_CANDIDATO, CODIGO_CARGO, SIGLA_UE) %>%
-                 summarise(total = n()) %>% filter(total > 1)
+                           summarise(total = n()) %>% filter(total > 1)
 
 wrong_ballot <- casos %>% right_join(problems_caso, by = c("NUM_TURNO", 
-                      "NUMERO_CANDIDATO", "CODIGO_CARGO", "SIGLA_UE"))
+                          "NUMERO_CANDIDATO", "CODIGO_CARGO", "SIGLA_UE"))
 
 #Exclude
 wrong_ballot <- wrong_ballot %>% mutate(key = paste0(SIGLA_UE, NUM_TURNO, NOME_URNA_CANDIDATO, 
@@ -732,20 +679,21 @@ write.csv(wrong_ballot, file = paste0(dir, "cepesp_data/wrong_ballot.csv"))
 #WHAT TO EXCLUDE
 cand_1998 <- cand_1998_2014[[1]]
 problems <- cand_1998 %>% group_by(NUM_TURNO, NUMERO_CANDIDATO, CODIGO_CARGO, SIGLA_UE) %>%
-  summarise(total = n()) %>% filter(total > 1)
+            summarise(total = n()) %>% filter(total > 1)
 
 casos <- cand_1998 %>% right_join(problems, by = c("NUM_TURNO", 
-                                  "NUMERO_CANDIDATO", "CODIGO_CARGO", "SIGLA_UE"))
+                       "NUMERO_CANDIDATO", "CODIGO_CARGO", "SIGLA_UE"))
 
-repeated_casos <- casos[duplicated(casos),] #save
+repeated_casos <- casos[duplicated(casos),]
 repeated_casos <- repeated_casos %>% mutate(key = paste0(SIGLA_UE, NUM_TURNO, NOME_URNA_CANDIDATO, 
                                                          NUMERO_CANDIDATO, DESCRICAO_ELEICAO, 
-                                                         NUM_TITULO_ELEITORAL_CANDIDATO, CODIGO_CARGO)) #save
+                                                         NUM_TITULO_ELEITORAL_CANDIDATO, CODIGO_CARGO)) 
 
 #But keeping only unique
 casos <- unique(casos)
 casos_notvalid <- casos %>% filter(!(COD_SITUACAO_CANDIDATURA == 2 | 
-                                   COD_SITUACAO_CANDIDATURA == 4))
+                                     COD_SITUACAO_CANDIDATURA == 4))
+
 casos_notvalid <- casos_notvalid %>% mutate(key = paste0(SIGLA_UE, NUM_TURNO, NOME_URNA_CANDIDATO, 
                                                          NUMERO_CANDIDATO, DESCRICAO_ELEICAO, 
                                                          NUM_TITULO_ELEITORAL_CANDIDATO, CODIGO_CARGO)) #save
