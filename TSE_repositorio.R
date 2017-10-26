@@ -1576,32 +1576,45 @@ table(cand_2016v5$DESC_SIT_TOT_TURNO, cand_2016v5$rankvoter)
 
 #Geting the right base
 runoff <- cand_2016 %>% filter(NUM_TURNO == 2 & DESCRICAO_CARGO == "PREFEITO") %>% distinct(SEQUENCIAL_CANDIDATO)
-vot_2016_runoff <- vot_2012 %>% filter(SQ_CANDIDATO %in% runoff$SEQUENCIAL_CANDIDATO & DESCRICAO_CARGO == "PREFEITO" & NUM_TURNO==2)
-cand_2016_runoff <- cand_2012 %>% filter(SEQUENCIAL_CANDIDATO %in% runoff$SEQUENCIAL_CANDIDATO & DESCRICAO_CARGO == "PREFEITO" & DESC_SIT_TOT_TURNO != "2º TURNO")
-stopifnot(length(unique(cand_2012_runoff$SEQUENCIAL_CANDIDATO))==nrow(cand_2012_runoff))
+vot_2016_runoff <- vot_2016 %>% filter(SQ_CANDIDATO %in% runoff$SEQUENCIAL_CANDIDATO & DESCRICAO_CARGO == "PREFEITO" & NUM_TURNO==2)
+cand_2016_runoff <- cand_2016 %>% filter(SEQUENCIAL_CANDIDATO %in% runoff$SEQUENCIAL_CANDIDATO & DESCRICAO_CARGO == "PREFEITO" & DESC_SIT_TOT_TURNO != "2º TURNO")
+stopifnot(length(unique(cand_2016_runoff$SEQUENCIAL_CANDIDATO))==nrow(cand_2016_runoff))
+
+#temp <- cand_2016_runoff[duplicated(cand_2016_runoff$SEQUENCIAL_CANDIDATO),]
+#View(cand_2016_runoff %>% filter(SEQUENCIAL_CANDIDATO == 220000001257)) #NULO#
+#View(cand_2016_runoff %>% filter(SEQUENCIAL_CANDIDATO == 220000000876)) #NULO#
+cand_2016_runoff <- cand_2016_runoff %>% filter(!(SEQUENCIAL_CANDIDATO == 220000001257 & 
+                                                DESC_SIT_TOT_TURNO == "#NULO#"))
+cand_2016_runoff <- cand_2016_runoff %>% filter(!(SEQUENCIAL_CANDIDATO == 220000000876 & 
+                                                DESC_SIT_TOT_TURNO == "#NULO#"))
+stopifnot(length(unique(cand_2016_runoff$SEQUENCIAL_CANDIDATO))==nrow(cand_2016_runoff))
 
 #Selecting candidatos a prefeito, aptos to aggregate votes per municipality
-vot_2012_runoffv2 <- vot_2012_runoff %>% filter(DESC_SIT_CAND_SUPERIOR=="APTO") %>% group_by(SIGLA_UE, SQ_CANDIDATO) %>% summarize(VOTO_MUN_CAND = sum(TOTAL_VOTOS))
+vot_2016_runoffv2 <- vot_2016_runoff %>% filter(DESC_SIT_CAND_SUPERIOR=="APTO") %>% 
+                    group_by(SIGLA_UE, SQ_CANDIDATO) %>% summarize(VOTO_MUN_CAND = sum(TOTAL_VOTOS))
 #Check
-stopifnot(length(unique(vot_2012_runoffv2$SIGLA_UE))==length(unique(vot_2012_runoff$SIGLA_UE)))
+stopifnot(length(unique(vot_2016_runoffv2$SIGLA_UE))==length(unique(vot_2016_runoff$SIGLA_UE)))
 
 #Getting municipality's total vote and candidate vote share and renaming to merge
-vot_2012_runoffv3 <- vot_2012_runoffv2  %>% group_by(SIGLA_UE) %>% summarize(VOTO_MUN_TOTAL = sum(VOTO_MUN_CAND)) %>% 
-  left_join(vot_2012_runoffv2, by=c("SIGLA_UE")) %>% 
-  mutate(VOTO_CAND_SHARE = VOTO_MUN_CAND/VOTO_MUN_TOTAL) %>% group_by(SIGLA_UE) %>% mutate(NUMBER_CANDIDATES = n()) %>% 
+vot_2016_runoffv3 <- vot_2016_runoffv2  %>% group_by(SIGLA_UE) %>% 
+  summarize(VOTO_MUN_TOTAL = sum(VOTO_MUN_CAND)) %>% 
+  left_join(vot_2016_runoffv2, by=c("SIGLA_UE")) %>% 
+  mutate(VOTO_CAND_SHARE = VOTO_MUN_CAND/VOTO_MUN_TOTAL) %>% 
+  group_by(SIGLA_UE) %>% mutate(NUMBER_CANDIDATES = n()) %>% 
   rename(SEQUENCIAL_CANDIDATO = SQ_CANDIDATO)
 
 #Smell Tests
-table(vot_2012_runoffv3$NUMBER_CANDIDATES==2)
-summary(vot_2012_runoffv3$VOTO_CAND_SHARE)
+table(vot_2016_runoffv3$NUMBER_CANDIDATES==2)
+summary(vot_2016_runoffv3$VOTO_CAND_SHARE)
 
 #Merging with candidate information
 #Making sure there are no NAs and keys are unique
-nrow(cand_2012_runoff %>% filter(is.na(SEQUENCIAL_CANDIDATO)))==0
-nrow(vot_2012_runoffv3 %>% filter(is.na(SEQUENCIAL_CANDIDATO)))==0
-nrow(vot_2012_runoffv3) == length(unique(vot_2012_runoffv3$SEQUENCIAL_CANDIDATO))
-nrow(cand_2012_runoff) == length(unique(cand_2012_runoff$SEQUENCIAL_CANDIDATO))
-cand_2012_runoffv2 <- cand_2012_runoff %>% left_join(vot_2012_runoffv3, by="SEQUENCIAL_CANDIDATO") %>% select(-SIGLA_UE.y) %>% rename(SIGLA_UE=SIGLA_UE.x)
+nrow(cand_2016_runoff %>% filter(is.na(SEQUENCIAL_CANDIDATO)))==0
+nrow(vot_2016_runoffv3 %>% filter(is.na(SEQUENCIAL_CANDIDATO)))==0
+nrow(vot_2016_runoffv3) == length(unique(vot_2016_runoffv3$SEQUENCIAL_CANDIDATO))
+nrow(cand_2016_runoff) == length(unique(cand_2016_runoff$SEQUENCIAL_CANDIDATO))
+cand_2016_runoffv2 <- cand_2016_runoff %>% left_join(vot_2016_runoffv3, by="SEQUENCIAL_CANDIDATO") %>% 
+                      select(-SIGLA_UE.y) %>% rename(SIGLA_UE=SIGLA_UE.x)
 
 #Debugging tactic
 stopifnot(nrow(anti_join(cand_2012_runoff, vot_2012_runoffv3, by="SEQUENCIAL_CANDIDATO"))==0)
