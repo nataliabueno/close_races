@@ -26,7 +26,7 @@ setwd("~")
 if(grepl("nataliabueno",getwd())==TRUE){#Allow for different paths in our computers
   dir <- "~/Dropbox/LOCAL_ELECTIONS/"
 }else{
-  dir <- ""
+  dir <- "~/Dropbox/LOCAL_ELECTIONS/"
 }
 
 #helper functions
@@ -41,105 +41,158 @@ dir_d <- "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/"
 #Candidate data
 url_cand98 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_1998.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_1998.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_1998/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_1998")
 cand_1998 <- get_tse(url_cand98, file_d, file_un)
 
 url_cand00 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2000.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2000.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2000/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2000")
 cand_2000 <- get_tse(url_cand00, file_d, file_un)
 
 url_cand02 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2002.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2002.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2002/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2002")
 cand_2002 <- get_tse(url_cand02, file_d, file_un)
 
 url_cand04 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2004.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2004.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2004/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2004")
 cand_2004 <- get_tse(url_cand04, file_d, file_un)
 
 url_cand06 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2006.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2006.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2006/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2006")
 cand_2006 <- get_tse(url_cand06, file_d, file_un)
 
 url_cand08 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2008.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2008.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2008/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2008")
 cand_2008 <- get_tse(url_cand08, file_d, file_un)
 
 url_cand10 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2010.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2010.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2010/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2010")
 cand_2010 <- get_tse(url_cand10, file_d, file_un)
 
 url_cand12 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2012.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2012.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2012/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2012")
 cand_2012 <- get_tse(url_cand12, file_d, file_un)
 
 url_cand14 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2014.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2014.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2014/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2014")
 cand_2014 <- get_tse(url_cand14, file_d, file_un)
 
 url_cand16 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2016.zip"
 file_d <- paste0(dir_d, "original_data/consulta_cand/consulta_cand_2016.zip")
-file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2016/")
+file_un <- paste0(dir_d, "original_unzipped/consulta_cand/consulta_cand_2016")
 cand_2016 <- get_tse(url_cand16, file_d, file_un)
 
 #Voting data
 url_vot98 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_1998.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_1998.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_1998/")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_1998")
 vot_1998 <- get_tse(url_vot98, file_d, file_un)
 
 url_vot00 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2000.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2000.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2000/")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2000")
 vot_2000 <- get_tse(url_vot00, file_d, file_un)
 
 url_vot02 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2002.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2002.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2002/")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2002")
 vot_2002 <- get_tse(url_vot02, file_d, file_un)
 
 url_vot04 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2004.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2004.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2004/")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2004")
 vot_2004 <- get_tse(url_vot04, file_d, file_un)
 
 url_vot06 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2006.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2006.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2006/")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2006")
 vot_2006 <- get_tse(url_vot06, file_d, file_un)
 
 url_vot08 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2008.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2008.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2008/")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2008")
 vot_2008 <- get_tse(url_vot08, file_d, file_un)
 
 url_vot10 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2010.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2010.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2010/")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2010")
 vot_2010 <- get_tse(url_vot10, file_d, file_un)
 
 url_vot12 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2012.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2012.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2012/")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2012")
 vot_2012 <- get_tse(url_vot12, file_d, file_un)
 
 url_vot14 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2014.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2014.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2014/")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2014")
 vot_2014 <- get_tse(url_vot14, file_d, file_un)
 
 url_vot16 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2016.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2016.zip")
-file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2016/")
+file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2016")
 vot_2016 <- get_tse(url_cand16, file_d, file_un)
 
+<<<<<<< HEAD:TSE_CEPESP_TEST.R
+=======
+# Votacao Secao TO DO
+
+#2016 TO DO
+
+ufs_2016 <- c("AC", "AL", "AP", "AM", "BA",   
+           "CE", "ES", "GO", "MA", "MT", "MS",
+           "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
+           "RN", "RS", "RO","RR","SC", "SP", "SE", "TO")
+
+for (i in 1:length(ufs_2016)){
+  url <- paste0("http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2016_", ufs_2016[i],
+                ".zip")
+  file_d <- paste0(dir_d, "original_data/votacao_secao/votacao_secao_2016_", ufs_2016[i], ".zip")
+  file_un <- paste0(dir_d, "original_unzipped/votacao_secao/votacao_secao_2016")
+  temp <- get_tse(url, file_d, file_un)  
+}
+
+#2014 TO DO
+
+ufs_2014 <- c("AC", "AL", "AP", "AM", "BA", "BR",   
+              "CE", "DF", "ES", "GO", "MA", "MT", "MS",
+              "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
+              "RN", "RS", "RO","RR","SC", "SP", "SE", "TO")
+
+for (i in 1:length(ufs_2014)){
+  url <- paste0("http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2014_", ufs_2014[i],
+                ".zip")
+  file_d <- paste0(dir_d, "original_data/votacao_secao/votacao_secao_2014_", ufs_2014[i], ".zip")
+  file_un <- paste0(dir_d, "original_unzipped/votacao_secao/votacao_secao_2014/")
+  temp <- get_tse(url, file_d, file_un) 
+}
+
+#2012 TO DO
+
+ufs_2012 <- c("AC", "AL", "AP", "AM", "BA",   
+              "CE", "ES", "GO", "MA", "MT", "MS",
+              "MG", "PA", "PB", "PR", "PE", "PI", "RJ",
+              "RN", "RS", "RO","RR","SC", "SP", "SE", "TO")
+
+for (i in 1:length(ufs_2012)){
+  url <- paste0("http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2012_", ufs_2012[i],
+              ".zip")
+  file_d <- paste0(dir_d, "original_data/votacao_secao/votacao_secao_2012_", ufs_2012[i], ".zip")
+  file_un <- paste0(dir_d, "original_unzipped/votacao_secao/votacao_secao_2012/")
+  temp <- get_tse(url, file_d, file_un) 
+}
+
+#<a href="http://agencia.tse.jus.br/estatistica/sead/eleicoes/eleicoes2012/votosecao/vsec_2t_AP_30102012194527.zip">Amapá</a>
+# <a href="http://agencia.tse.jus.br/estatistica/sead/eleicoes/eleicoes2012/votosecao/vsec_1t_AC.zip">Acre</a>
+  
+>>>>>>> 530f1d1a7f5929ea8397bf17a4cc01163ab95c90:close_races/TSE_CEPESP_TEST.R
 ###################################################################
 #1. Combining
 
@@ -716,8 +769,20 @@ write.csv(cand_1998v2, file = paste0(dir, "cepesp_data/cand_1998v2.csv"))
 temp <- cand_1998 %>% filter(key %in% exclude)
 stopifnot((nrow(cand_1998) - nrow(cand_1998v2)) == nrow(temp))
 
+
 #2000
 
+#counting ufs per city
+
+ufs_2000 <- cand_2000 %>% group_by(SIGLA_UE, SIGLA_UF) %>%
+  summarise(total = n()) 
+
+ufs_2000 <- ufs_2000 %>% group_by(SIGLA_UE) %>%
+  summarise(total = n())
+
+# only the municipality 400037 appears in two UFs
+
+#
 cand_2000v1 <- cand_2000 %>% filter(!(CODIGO_CARGO == 13 & NUM_TURNO == 2))
 
 problems <- cand_2000v1 %>% group_by(NUM_TURNO, NUMERO_CANDIDATO, CODIGO_CARGO, SIGLA_UE, 
