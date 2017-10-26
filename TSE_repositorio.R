@@ -1559,13 +1559,25 @@ cand_2016v4 <- cand_2016v3 %>% filter(NUMBER_CANDIDATES != 1) %>% group_by(SIGLA
 table(cand_2016v4$DESC_SIT_TOT_TURNO, cand_2016v4$rankvoter)
 
 temp <- cand_2016v4 %>% filter(rankvoter == 1, DESC_SIT_TOT_TURNO == "NÃO ELEITO")
+#http://divulga.tse.jus.br/oficial/index.html
+#Many of these places are scheduled for suplementares or already had them.
+ids <- temp %>% distinct(SIGLA_UE)
+
+temp <- cand_2016v4 %>% filter(rankvoter == 1, DESC_SIT_TOT_TURNO == "#NULO#")
+#NULO candidates are places that resultados were still "prejudicado" by the 
+#time of data download. Probably places for eleições suplementares
+
+cand_2016v4 <- cand_2016v4 %>% filter(!(DESC_SIT_TOT_TURNO == "#NULO#"))
+cand_2016v5 <- cand_2016v4 %>% filter(!(SIGLA_UE %in% ids$SIGLA_UE)) #solution until end of 2017 (download data again)
+
+table(cand_2016v5$DESC_SIT_TOT_TURNO, cand_2016v5$rankvoter)
 
 #######Calculating vote share for eleicoes regulares (places that had runoffs)
 
 #Geting the right base
-runoff <- cand_2012 %>% filter(NUM_TURNO == 2 & DESCRICAO_CARGO == "PREFEITO") %>% distinct(SEQUENCIAL_CANDIDATO)
-vot_2012_runoff <- vot_2012 %>% filter(SQ_CANDIDATO %in% runoff$SEQUENCIAL_CANDIDATO & DESCRICAO_CARGO == "PREFEITO" & NUM_TURNO==2)
-cand_2012_runoff <- cand_2012 %>% filter(SEQUENCIAL_CANDIDATO %in% runoff$SEQUENCIAL_CANDIDATO & DESCRICAO_CARGO == "PREFEITO" & DESC_SIT_TOT_TURNO != "2º TURNO")
+runoff <- cand_2016 %>% filter(NUM_TURNO == 2 & DESCRICAO_CARGO == "PREFEITO") %>% distinct(SEQUENCIAL_CANDIDATO)
+vot_2016_runoff <- vot_2012 %>% filter(SQ_CANDIDATO %in% runoff$SEQUENCIAL_CANDIDATO & DESCRICAO_CARGO == "PREFEITO" & NUM_TURNO==2)
+cand_2016_runoff <- cand_2012 %>% filter(SEQUENCIAL_CANDIDATO %in% runoff$SEQUENCIAL_CANDIDATO & DESCRICAO_CARGO == "PREFEITO" & DESC_SIT_TOT_TURNO != "2º TURNO")
 stopifnot(length(unique(cand_2012_runoff$SEQUENCIAL_CANDIDATO))==nrow(cand_2012_runoff))
 
 #Selecting candidatos a prefeito, aptos to aggregate votes per municipality
