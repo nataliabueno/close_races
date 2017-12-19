@@ -274,7 +274,7 @@ files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unz
 cand_2012 <- lapply(files, read.table, sep = ";", header = F, 
                     stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 cand_2012 <- do.call("rbind", cand_2012c)
-names(cand_2012) <- labels_2012
+names(cand_2012) <- labels_2012c
 cand_2012 <- as_tibble(cand_2012)
 
 #candidates 2016
@@ -296,7 +296,7 @@ files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unz
 cand_2016 <- lapply(files, read.table, sep = ";", 
                     header = F, stringsAsFactors = F, fill = T, fileEncoding = "latin1") 
 cand_2016 <- do.call("rbind", cand_2016c)
-names(cand_2016) <- labels_2016
+names(cand_2016) <- labels_2016c
 cand_2016 <- as_tibble(cand_2016)
 
 cand_2000_2016 <- list(cand_2000, cand_2004, cand_2008, cand_2012, cand_2016)
@@ -437,7 +437,7 @@ vot_1998 <- as_tibble(vot_1998)
 
 #Voting 2002
 files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2002/votacao_candidato_munzona_2002_",
-                        ufs, ".txt"))
+                        ufs_n, ".txt"))
 vot_2002 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 vot_2002 <- do.call("rbind", vot_2002)
@@ -446,7 +446,7 @@ vot_2002 <- as_tibble(vot_2002)
 
 #Voting data 2006
 files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2006/votacao_candidato_munzona_2006_",
-                        ufs, ".txt"))
+                        ufs_n, ".txt"))
 vot_2006 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors = F, fill = T, fileEncoding = "windows-1252") 
 vot_2006 <- do.call("rbind", vot_2006)
@@ -455,7 +455,7 @@ vot_2006 <- as_tibble(vot_2006)
 
 #Voting data 2010
 files <- as.list(paste0("~/Dropbox/LOCAL_ELECTIONS/repositorio_data/original_unzipped/votacao_munzona/votacao_candidato_munzona_2010/votacao_candidato_munzona_2010_",
-                        ufs, ".txt"))
+                        ufs_n, ".txt"))
 vot_2010 <- lapply(files, read.table, sep = ";", 
                    header = F, stringsAsFactors=F, fill = T, fileEncoding = "windows-1252") 
 vot_2010 <- do.call("rbind", vot_2010)
