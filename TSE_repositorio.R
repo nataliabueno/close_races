@@ -84,7 +84,7 @@ vot_2012 <- get_tse(url_vot12, file_d, file_un)
 url_vot16 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2016.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidado_munzona_2016.zip")
 file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidado_munzona_2016/")
-vot_2016 <- get_tse(url_cand16, file_d, file_un)
+vot_2016 <- get_tse(url_vot16, file_d, file_un)
 
 ###################################################################
 #1. Combining
@@ -1782,8 +1782,9 @@ electionsff_2016 <- electionsff_2016 %>% mutate(NUM_TITULO_ELEITORAL_CANDIDATO =
 
 electionsff <- bind_rows(electionsff_2000, electionsff_2004, electionsff_2008, electionsff_2012, electionsff_2016)
 
-save(electionsff, file="~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000_2016.Rda")
+save(electionsff, file = "~/Dropbox/LOCAL_ELECTIONS/repositorio_data/final_data/electionsff_2000_2016.Rda")
 
 Number_Mun <- electionsff %>% group_by(ANO_ELEICAO) %>% 
               distinct(SIGLA_UE) %>% count()
+Number_Mun
 table(electionsff$DESC_SIT_TOT_TURNO)

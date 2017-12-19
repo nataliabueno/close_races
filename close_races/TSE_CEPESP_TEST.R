@@ -138,7 +138,7 @@ vot_2014 <- get_tse(url_vot14, file_d, file_un)
 url_vot16 <- "http://agencia.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2016.zip"
 file_d <- paste0(dir_d, "original_data/votacao_munzona/votacao_candidato_munzona_2016.zip")
 file_un <- paste0(dir_d, "original_unzipped/votacao_munzona/votacao_candidato_munzona_2016")
-vot_2016 <- get_tse(url_cand16, file_d, file_un)
+vot_2016 <- get_tse(url_vot16, file_d, file_un)
 
 <<<<<<< HEAD:TSE_CEPESP_TEST.R
 =======
